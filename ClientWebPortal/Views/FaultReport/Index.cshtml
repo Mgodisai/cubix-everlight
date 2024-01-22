@@ -1,0 +1,30 @@
+﻿@model IEnumerable<FaultReportViewModel>
+@inject IStringLocalizer<HomeController> Localizer
+@{
+    ViewData["Title"] = @Localizer["FaultReport"];
+}
+<h1>@Localizer["FaultReports"]</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>@Localizer["Description"]</th>
+            <th>@Localizer["Status"]</th>
+            <th>@Localizer["ReportedAt"]</th>
+            <th>@Localizer["Actions"]</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var report in Model)
+        {
+            <tr>
+                <td>@report.Description</td>
+                <td>@report.Status</td>
+                <td>@report.ReportedAt.ToShortDateString()</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@report.Id">@Localizer["Details"]</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

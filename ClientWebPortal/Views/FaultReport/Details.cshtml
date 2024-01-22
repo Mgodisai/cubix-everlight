@@ -1,0 +1,33 @@
+﻿@model FaultReportViewModel
+@inject IStringLocalizer<HomeController> Localizer
+@{
+    ViewData["Title"] = @Localizer["FaultReport"];
+}
+<div class="container mt-3">
+    <h1 class="mb-4">@Localizer["FaultReportDetails"]</h1>
+
+    <div class="card">
+        <div class="card-header">
+            Report ID: @Model.Id
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">@Localizer["Description"]</h5>
+            <p class="card-text">@Model.Description</p>
+
+            <h5 class="card-title">@Localizer["Email"]</h5>
+            <p class="card-text">@Model.Email</p>
+
+            <h5 class="card-title">@Localizer["ReportedAt"]</h5>
+            <p class="card-text">@Model.ReportedAt.ToShortDateString()</p>
+
+            <h5 class="card-title">@Localizer["Status"]</h5>
+            <p class="card-text">@Model.Status</p>
+
+            <h5 class="card-title">@Localizer["Address"]</h5>
+            <p class="card-text">@Model.Address</p>
+        </div>
+    </div>
+
+    <a class="btn btn-primary mt-3" asp-action="Index">@Localizer["BackToList"]</a>
+</div>
+

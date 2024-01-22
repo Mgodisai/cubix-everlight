@@ -1,0 +1,82 @@
+﻿@using ClientWebPortal.Controllers
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.Extensions.Localization
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+@inject IStringLocalizer<HomeController> Localizer
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@Localizer["Title"] - @ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/ClientWebPortal.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+            <div class="container-fluid">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">@Localizer["Title"]</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="FaultReport" asp-action="Create">@Localizer["NewFaultReport"]</a>
+                        </li>
+                        @if (User?.Identity?.IsAuthenticated == true)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="FaultReport" asp-action="Index">@Localizer["FaultReport"]</a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+                <form method="post" asp-controller="Home" asp-action="SetLanguage">
+                    <input type="hidden" name="returnUrl" value="@Url.Action("Index", "Home")" />
+                    <button type="submit" name="culture" value="en-US" class="btn btn-link">
+                        <img src="~/icon/gb.png" alt="English" />
+                    </button>
+                    <button type="submit" name="culture" value="hu-HU" class="btn btn-link">
+                        <img src="~/icon/hu.png" alt="Hungarian" />
+                    </button>
+                </form>
+                <div>
+                    @if (SignInManager.IsSignedIn(User))
+                    {
+                        <span>@User?.Identity?.Name</span>
+                        <form asp-controller="Account" asp-action="Logout" method="post">
+                            <button type="submit">@Localizer["Logout"]</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <a asp-area="" asp-controller="Account" asp-action="Login">@Localizer["Login"]</a>
+                        <a asp-area="" asp-controller="Account" asp-action="Register">@Localizer["Register"]</a>
+                    }
+                </div>
+
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; @Localizer["Year"] - @Localizer["Title"]
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

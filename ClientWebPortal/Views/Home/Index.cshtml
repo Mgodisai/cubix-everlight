@@ -1,0 +1,7 @@
+﻿@inject IStringLocalizer<HomeController> Localizer
+@{
+    ViewData["Title"] = @Localizer["Home"];
+}
+<div class="text-center">
+    <h1 class="display-4">@Localizer["WelcomeMessage"]</h1>
+</div>

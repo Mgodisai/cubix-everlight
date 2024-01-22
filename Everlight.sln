@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34330.188
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataContextLib", "Data\DataContextLib.csproj", "{004ECCD6-5C45-4588-BC45-5A2CBE91D0E2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServiceConsole", "ServiceConsole\ServiceConsole.csproj", "{26F6CEB4-AEDD-4132-A308-459B92D89724}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClientWebPortal", "ClientWebPortal\ClientWebPortal.csproj", "{07961BE2-BFF8-4D01-BE39-B4AACBA4057E}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "CommonResources", "CommonResources\CommonResources.shproj", "{116C22F1-E09F-4EF1-AB91-B1AC8FFA0471}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{004ECCD6-5C45-4588-BC45-5A2CBE91D0E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{004ECCD6-5C45-4588-BC45-5A2CBE91D0E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{004ECCD6-5C45-4588-BC45-5A2CBE91D0E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{004ECCD6-5C45-4588-BC45-5A2CBE91D0E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{26F6CEB4-AEDD-4132-A308-459B92D89724}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{26F6CEB4-AEDD-4132-A308-459B92D89724}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{26F6CEB4-AEDD-4132-A308-459B92D89724}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{26F6CEB4-AEDD-4132-A308-459B92D89724}.Release|Any CPU.Build.0 = Release|Any CPU
+		{07961BE2-BFF8-4D01-BE39-B4AACBA4057E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{07961BE2-BFF8-4D01-BE39-B4AACBA4057E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{07961BE2-BFF8-4D01-BE39-B4AACBA4057E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{07961BE2-BFF8-4D01-BE39-B4AACBA4057E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {824644C9-CBE4-499E-B39A-A3201D6BDD37}
+	EndGlobalSection
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		CommonResources\CommonResources.projitems*{07961be2-bff8-4d01-be39-b4aacba4057e}*SharedItemsImports = 5
+		CommonResources\CommonResources.projitems*{116c22f1-e09f-4ef1-ab91-b1ac8ffa0471}*SharedItemsImports = 13
+	EndGlobalSection
+EndGlobal

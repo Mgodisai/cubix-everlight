@@ -1,0 +1,41 @@
+﻿@model FaultReportViewModel
+@inject IStringLocalizer<HomeController> Localizer
+@{
+    ViewData["Title"] = @Localizer["FaultReport"];
+}
+<h2>@Localizer["NewFaultReport"]</h2>
+
+<form asp-controller="FaultReport" asp-action="Create" method="post">
+    <div class="form-group">
+        <label asp-for="Description">@Localizer["Description"]:</label>
+        <input asp-for="Description" class="form-control" />
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Address.PostalCode">@Localizer["PostalCode"]:</label>
+        <input asp-for="Address.PostalCode" class="form-control" />
+        <span asp-validation-for="Address.PostalCode" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Address.City">@Localizer["City"]:</label>
+        <input asp-for="Address.City" class="form-control" />
+        <span asp-validation-for="Address.City" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Address.Street">@Localizer["Street"]:</label>
+        <input asp-for="Address.Street" class="form-control" />
+        <span asp-validation-for="Address.Street" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Address.HouseNumber">@Localizer["HouseNumber"]:</label>
+        <input asp-for="Address.HouseNumber" class="form-control" />
+        <span asp-validation-for="Address.HouseNumber" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Email">@Localizer["Email"]:</label>
+        <input asp-for="Email" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">@Localizer["Submit"]</button>
+</form>
+
