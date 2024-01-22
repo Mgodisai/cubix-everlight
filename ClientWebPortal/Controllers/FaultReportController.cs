@@ -36,6 +36,7 @@ namespace ClientWebPortal.Controllers
         {
             if (ModelState.IsValid)
             {
+                faultReportViewModel.ReportedAt = DateTime.UtcNow;
                 await _faultReportService.AddFaultReport(faultReportViewModel);
                 return RedirectToAction("Index");
             }

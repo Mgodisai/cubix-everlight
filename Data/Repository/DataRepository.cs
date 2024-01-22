@@ -56,7 +56,7 @@ namespace Data.Repository
         public IEnumerable<T> FindWithSpecification(ISpecification<T> spec)
         {
             var query = ApplySpecification(spec);
-            return query.AsNoTracking().ToList();
+            return query.AsNoTracking();
         }
 
         private IQueryable<T> ApplySpecification(ISpecification<T> spec)
@@ -64,7 +64,12 @@ namespace Data.Repository
             var query = _dbSet.AsQueryable();
 
             if (spec.Criteria != null)
-                query = query.Where(spec.Criteria);
+            {
+                foreach (var criteria in spec.Criteria)
+                {
+                    query = query.Where(criteria);
+                }
+            }
 
             query = spec.Includes.Aggregate(query, (current, include) => current.Include(include));
 

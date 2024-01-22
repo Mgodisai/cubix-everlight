@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClientWebPortal", "ClientWe
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "CommonResources", "CommonResources\CommonResources.shproj", "{116C22F1-E09F-4EF1-AB91-B1AC8FFA0471}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{DF1B8FDD-2AB3-45A8-A7CC-8518373F66CC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,6 +31,10 @@ Global
 		{07961BE2-BFF8-4D01-BE39-B4AACBA4057E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{07961BE2-BFF8-4D01-BE39-B4AACBA4057E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{07961BE2-BFF8-4D01-BE39-B4AACBA4057E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DF1B8FDD-2AB3-45A8-A7CC-8518373F66CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DF1B8FDD-2AB3-45A8-A7CC-8518373F66CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DF1B8FDD-2AB3-45A8-A7CC-8518373F66CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DF1B8FDD-2AB3-45A8-A7CC-8518373F66CC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
