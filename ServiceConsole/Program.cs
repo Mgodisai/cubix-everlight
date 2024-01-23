@@ -1,9 +1,11 @@
 ﻿using Data;
 using Data.Models;
 using Data.Repository;
+using DataContextLib.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
+using ServiceConsole.Service;
 using ServiceConsole.Specifications;
+using System.Text;
 using System.Text.RegularExpressions;
 using static Common.ConsoleExtensions;
 
@@ -14,10 +16,52 @@ namespace ServiceConsole
         private const string regexPatternBudapestDistrict = @"^(1(0\d|1\d|2[0-3]))$";
         private const string regexPatternHungarianPostalCode = @"^[1-9]\d{3}$";
         private const string regexPatternForDays = @"^\d{1,2}$";
-        static void Main(string[] args)
+        static int Main(string[] args)
         {
             using var dbContext = ConfigureDbContext();
+            var authService = new ConsoleAuthService(new DataRepository<Employee>(dbContext));
+
+            var authResult = PerformAuthentication(authService);
+
+            if (authResult.IsAuthenticated)
+            {
+                Console.Clear();
+                WriteLineSuccess($"Sikeres bejelentkezés! Welcome, {authResult.DisplayName}");
+            }
+            else
+            {
+                WriteLineError("Hibás bejelentkezési adatok!");
+                return 1;
+            }
+
             RunFaultReportQueryLoop(dbContext);
+            return 0;
+        }
+
+        private static AuthenticationResult PerformAuthentication(ConsoleAuthService authService)
+        {
+            WriteWarning("Username: ");
+            var username = Console.ReadLine() ?? string.Empty;
+
+            WriteWarning("Password: ");
+            var password = ReadPassword();
+
+            return authService.Authenticate(username, password);
+        }
+
+        private static string ReadPassword()
+        {
+            var password = new StringBuilder();
+            while (true)
+            {
+                var key = Console.ReadKey(intercept: true);
+                if (key.Key == ConsoleKey.Enter) break;
+                if (key.Key == ConsoleKey.Backspace && password.Length > 0) password.Remove(password.Length - 1, 1);
+                else if (key.Key != ConsoleKey.Backspace) password.Append(key.KeyChar);
+            }
+
+            Console.WriteLine();
+            return password.ToString();
         }
 
         private static IEnumerable<FaultReport> ExecuteQuery(string input, QueryType queryType, IRepository<FaultReport> repository)

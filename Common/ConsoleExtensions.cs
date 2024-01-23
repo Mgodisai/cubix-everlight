@@ -27,5 +27,10 @@
         {
             WriteInColor(message ?? string.Empty, ConsoleColor.Yellow, true);
         }
+
+        public static void WriteWarning(string? message)
+        {
+            WriteInColor(message ?? string.Empty, ConsoleColor.Yellow, false);
+        }
     }
 }
