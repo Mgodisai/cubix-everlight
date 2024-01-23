@@ -18,19 +18,14 @@
             WriteInColor(message ?? string.Empty, ConsoleColor.Green, true);
         }
 
-        public static void WriteSuccess(string? message)
-        {
-            WriteInColor(message ?? string.Empty, ConsoleColor.Green, false);
-        }
-
         public static void WriteLineError(string? message)
         {
             WriteInColor(message ?? string.Empty, ConsoleColor.Red, true);
         }
 
-        public static void WriteError(string? message)
+        public static void WriteLineWarning(string? message)
         {
-            WriteInColor(message ?? string.Empty, ConsoleColor.Red, false);
+            WriteInColor(message ?? string.Empty, ConsoleColor.Yellow, true);
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Data.Models;
+using Data.Specifications;
 
-namespace Data.Specifications
+namespace ClientWebPortal.Service.Specifications
 {
     public class FaultReportWithAddressSpecification : BaseSpecification<FaultReport>
     {

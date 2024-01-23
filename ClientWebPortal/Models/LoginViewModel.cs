@@ -1,18 +1,20 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using ClientWebPortal.Resources;
+using System.ComponentModel.DataAnnotations;
 
 namespace ClientWebPortal.Models
 {
     public class LoginViewModel
     {
-        [Required]
+        [Required(ErrorMessageResourceType = typeof(ValidationMessages), 
+            ErrorMessageResourceName = nameof(ValidationMessages.EmailRequired))]
         [EmailAddress]
         public required string Email { get; set; }
 
-        [Required]
+        [Required(ErrorMessageResourceType = typeof(ValidationMessages), 
+            ErrorMessageResourceName = nameof(ValidationMessages.PasswordRequired))]
         [DataType(DataType.Password)]
         public required string Password { get; set; }
 
-        [Display(Name = "Remember me?")]
         public bool RememberMe { get; set; }
     }
 }

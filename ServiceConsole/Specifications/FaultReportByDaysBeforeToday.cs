@@ -7,6 +7,7 @@ namespace ServiceConsole.Specifications
             : base()
         {
             AddCriteria(fr=> fr.ReportedAt.AddDays(input).Date<DateTime.Now.Date);
+            AddOrderBy(fr => fr.ReportedAt);
         }
     }
 }

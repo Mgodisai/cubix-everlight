@@ -1,21 +1,27 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using ClientWebPortal.Resources;
+using System.ComponentModel.DataAnnotations;
 
 namespace ClientWebPortal.Models
 {
     public class RegisterViewModel
     {
-        [Required]
+        [Required(ErrorMessageResourceType = typeof(ValidationMessages), 
+            ErrorMessageResourceName = nameof(ValidationMessages.EmailRequired))]
         [EmailAddress]
         public string Email { get; set; }
 
-        [Required]
-        [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+        [Required(ErrorMessageResourceType = typeof(ValidationMessages), 
+            ErrorMessageResourceName = nameof(ValidationMessages.PasswordRequired))]
+        [StringLength(100, ErrorMessageResourceType = typeof(ValidationMessages),
+            ErrorMessageResourceName = nameof(ValidationMessages.PasswordLengthError), MinimumLength = 6)]
         [DataType(DataType.Password)]
         public string Password { get; set; }
 
+        [Required(ErrorMessageResourceType = typeof(ValidationMessages),
+           ErrorMessageResourceName = nameof(ValidationMessages.ConfirmPasswordRequired))]
         [DataType(DataType.Password)]
-        [Display(Name = "Confirm password")]
-        [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+        [Compare("Password", ErrorMessageResourceType = typeof(ValidationMessages),
+            ErrorMessageResourceName = nameof(ValidationMessages.PasswordMatchError))]
         public string ConfirmPassword { get; set; }
     }
 }

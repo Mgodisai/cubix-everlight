@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using ClientWebPortal.Controllers;
 using ClientWebPortal.Models;
+using ClientWebPortal.Service.Specifications;
 using Data.Models;
 using Data.Repository;
-using Data.Specifications;
 using Microsoft.Extensions.Localization;
 
 namespace ClientWebPortal.Service

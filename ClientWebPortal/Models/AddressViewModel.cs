@@ -1,24 +1,26 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using ClientWebPortal.Resources;
+using System.ComponentModel.DataAnnotations;
 
 namespace ClientWebPortal.Models
 {
     public class AddressViewModel
     {
-        [Display(Name = "Postal Code")]
-        [Required(ErrorMessage = "Postal Code is Required")]
-        [RegularExpression(@"^\d{4,5}$", ErrorMessage = "Please enter a valid Postal Code (4 or 5 digit format")]
+        [Required(ErrorMessageResourceType = typeof(ValidationMessages), 
+            ErrorMessageResourceName = nameof(ValidationMessages.PostalCodeRequired))]
+        [RegularExpression(@"^\d{4}$", ErrorMessageResourceType = typeof(ValidationMessages), 
+            ErrorMessageResourceName = nameof(ValidationMessages.PostalCodeFormatInvalid))]
         public string? PostalCode { get; set; }
 
-        [Required]
-        [Display(Name = "City")]
+        [Required(ErrorMessageResourceType = typeof(ValidationMessages), 
+            ErrorMessageResourceName = nameof(ValidationMessages.CityRequired))]
         public string? City { get; set; }
 
-        [Required]
-        [Display(Name = "Street")]
+        [Required(ErrorMessageResourceType = typeof(ValidationMessages), 
+            ErrorMessageResourceName = nameof(ValidationMessages.StreetRequired))]
         public string? Street { get; set; }
 
-        [Required]
-        [Display(Name = "House Number")]
+        [Required(ErrorMessageResourceType = typeof(ValidationMessages), 
+            ErrorMessageResourceName = nameof(ValidationMessages.HouseNumberRequired))]
         public string? HouseNumber { get; set; }
 
         public override string? ToString()

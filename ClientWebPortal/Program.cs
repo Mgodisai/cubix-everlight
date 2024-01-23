@@ -11,6 +11,8 @@ using Data.Repository;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using NLog.Web;
 using NLog;
+using Microsoft.AspNetCore.Components.Forms;
+using ClientWebPortal.Resources;
 
 namespace ClientWebPortal
 {
@@ -63,7 +65,11 @@ namespace ClientWebPortal
             ConfigureRepositories(builder);
 
             builder.Services.AddAutoMapper(typeof(FaultReportMappingProfile));
-            builder.Services.AddControllersWithViews();
+            builder.Services.AddControllersWithViews()
+                .AddDataAnnotationsLocalization(options => {
+                    options.DataAnnotationLocalizerProvider = (type, factory) =>
+                        factory.Create(typeof(ValidationMessages));
+                });
 
             ConfigureEmailService(builder);
             ConfigureLocalization(builder);

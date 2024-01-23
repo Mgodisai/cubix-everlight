@@ -6,7 +6,7 @@ namespace ServiceConsole.Specifications
         public FaultReportByNormalPostalCodeSpecification(string input) 
             : base()
         {
-            AddCriteria(fr=> fr.Address.PostalCode.Equals(input));
+            AddCriteria(fr => fr.Address != null && fr.Address.PostalCode != null && fr.Address.PostalCode.Equals(input));
         }
     }
 }

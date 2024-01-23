@@ -2,6 +2,7 @@
 using Data.Models;
 using Data.Repository;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using ServiceConsole.Specifications;
 using System.Text.RegularExpressions;
 using static Common.ConsoleExtensions;
@@ -15,10 +16,8 @@ namespace ServiceConsole
         private const string regexPatternForDays = @"^\d{1,2}$";
         static void Main(string[] args)
         {
-            var dbContextOptions = ConfigureDbContextOptions();
-            using var context = new DataDbContext(dbContextOptions);
-            InitializeDatabase(context);
-            RunFaultReportQueryLoop(context);
+            using var dbContext = ConfigureDbContext();
+            RunFaultReportQueryLoop(dbContext);
         }
 
         private static IEnumerable<FaultReport> ExecuteQuery(string input, QueryType queryType, IRepository<FaultReport> repository)
@@ -50,7 +49,10 @@ namespace ServiceConsole
                 {
                     foreach (var fr in result)
                     {
-                        WriteLineSuccess(fr.ToString());
+                        if (fr.Status==FaultReportStatus.New)
+                            WriteLineSuccess(fr.ToString());
+                        if (fr.Status == FaultReportStatus.InProgress)
+                            WriteLineWarning(fr.ToString());
                     }
                 }
                 else
@@ -64,7 +66,7 @@ namespace ServiceConsole
             }
         }
 
-        private static DbContextOptions<DataDbContext> ConfigureDbContextOptions()
+        private static DataDbContext ConfigureDbContext()
         {
             var optionsBuilder = new DbContextOptionsBuilder<DataDbContext>();
             string appDataDirectory = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
@@ -77,18 +79,15 @@ namespace ServiceConsole
             }
 
             optionsBuilder.UseSqlite($"Data Source={dbFilePath}");
-            return optionsBuilder.Options;
-        }
-
-        private static void InitializeDatabase(DataDbContext context)
-        {
+            var context = new DataDbContext(optionsBuilder.Options);
             context.Database.EnsureCreated();
             context.Database.Migrate();
+            return context;
         }
 
         private static string GetUserInput()
         {
-            Console.WriteLine("Hibabejelentések lekérdezése irányítószám (9999 formátum) vagy napok (<100) alapján (q: kilépés)");
+            Console.WriteLine("Hibabejelentések lekérdezése (irányítószámok: 9999 | kerületek: 1xx | napok <100) - q: kilépés");
             return Console.ReadLine() ?? string.Empty;
         }
 

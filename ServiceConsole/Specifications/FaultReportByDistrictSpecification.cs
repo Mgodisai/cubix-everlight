@@ -5,7 +5,8 @@
         public FaultReportByDistrictSpecification(string input) 
             : base()
         {
-            AddCriteria(fr=> fr.Address.PostalCode.StartsWith(input));
+            AddCriteria(fr=> fr.Address != null && fr.Address.PostalCode != null && fr.Address.PostalCode.StartsWith(input));
+            AddOrderBy(fr => fr.Address.PostalCode);
         }
     }
 }
