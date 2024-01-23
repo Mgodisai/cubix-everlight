@@ -13,6 +13,7 @@ using NLog.Web;
 using NLog;
 using Microsoft.AspNetCore.Components.Forms;
 using ClientWebPortal.Resources;
+using DataContextLib.Models;
 
 namespace ClientWebPortal
 {
@@ -65,6 +66,7 @@ namespace ClientWebPortal
             ConfigureRepositories(builder);
 
             builder.Services.AddAutoMapper(typeof(FaultReportMappingProfile));
+            builder.Services.AddAutoMapper(typeof(EmployeeMappingProfile));
             builder.Services.AddControllersWithViews()
                 .AddDataAnnotationsLocalization(options => {
                     options.DataAnnotationLocalizerProvider = (type, factory) =>
@@ -99,6 +101,21 @@ namespace ClientWebPortal
                     return new DataRepository<FaultReport>(dbContext);
                 });
             builder.Services.AddScoped<IFaultReportService, FaultReportService>();
+
+            builder.Services.AddScoped<IRepository<Employee>>(
+                provider =>
+                {
+                    var dbContext = provider.GetRequiredService<DataDbContext>();
+                    return new DataRepository<Employee>(dbContext);
+                });
+            builder.Services.AddScoped<IEmployeeService, EmployeeService>();
+
+            builder.Services.AddScoped<IRepository<Position>>(
+                provider =>
+                {
+                    var dbContext = provider.GetRequiredService<DataDbContext>();
+                    return new DataRepository<Position>(dbContext);
+                });
         }
 
         private static void ConfigureIdentity(WebApplicationBuilder builder)

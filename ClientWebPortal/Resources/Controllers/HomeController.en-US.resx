@@ -178,4 +178,7 @@
   <data name="ConfirmPassword" xml:space="preserve">
     <value>Confirm Password</value>
   </data>
+  <data name="EmployeeMenuItem" xml:space="preserve">
+    <value>Employees</value>
+  </data>
 </root>
