@@ -1,4 +1,5 @@
-﻿using Data;
+﻿using Common;
+using Data;
 using Data.Models;
 using Data.Repository;
 using DataContextLib.Models;
@@ -18,6 +19,7 @@ namespace ServiceConsole
         private const string regexPatternForDays = @"^\d{1,2}$";
         static int Main(string[] args)
         {
+            WriteLineSuccess(Strings.General_CompanyName + " - "+Strings.ServiceConsole_AppName);
             using var dbContext = ConfigureDbContext();
             var authService = new ConsoleAuthService(new DataRepository<Employee>(dbContext));
 
@@ -26,11 +28,12 @@ namespace ServiceConsole
             if (authResult.IsAuthenticated)
             {
                 Console.Clear();
-                WriteLineSuccess($"Sikeres bejelentkezés! Welcome, {authResult.DisplayName}");
+                WriteLineSuccess(Strings.General_SuccessfulLogin);
+                WriteLineSuccess(String.Format(Strings.ServiceConsole_Greeting, authResult.DisplayName, authResult.Username));
             }
             else
             {
-                WriteLineError("Hibás bejelentkezési adatok!");
+                WriteLineError(Strings.Error_BadCredentials);
                 return 1;
             }
 
@@ -40,10 +43,10 @@ namespace ServiceConsole
 
         private static AuthenticationResult PerformAuthentication(ConsoleAuthService authService)
         {
-            WriteWarning("Username: ");
+            WriteWarning(Strings.General_Username+": ");
             var username = Console.ReadLine() ?? string.Empty;
 
-            WriteWarning("Password: ");
+            WriteWarning(Strings.General_Password+": ");
             var password = ReadPassword();
 
             return authService.Authenticate(username, password);
@@ -101,12 +104,12 @@ namespace ServiceConsole
                 }
                 else
                 {
-                    WriteLineError("Nincs találat");
+                    WriteLineError(Strings.General_NoResult);
                 }
             }
             else
             {
-                WriteLineError("Hibás lekérdezés");
+                WriteLineError(Strings.General_BadQuery);
             }
         }
 
@@ -114,8 +117,8 @@ namespace ServiceConsole
         {
             var optionsBuilder = new DbContextOptionsBuilder<DataDbContext>();
             string appDataDirectory = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            string appDirectory = Path.Combine(appDataDirectory, "EverlightApp");
-            string dbFilePath = Path.Combine(appDirectory, "el.db");
+            string appDirectory = Path.Combine(appDataDirectory, Strings.General_AppDataDirectory);
+            string dbFilePath = Path.Combine(appDirectory, Strings.General_DbName);
 
             if (!Directory.Exists(appDirectory))
             {
@@ -131,7 +134,7 @@ namespace ServiceConsole
 
         private static string GetUserInput()
         {
-            Console.WriteLine("Hibabejelentések lekérdezése (irányítószámok: 9999 | kerületek: 1xx | napok <100) - q: kilépés");
+            Console.WriteLine(string.Format(Strings.ServiceConsole_Info, Strings.ServiceConsole_Quit));
             return Console.ReadLine() ?? string.Empty;
         }
 
@@ -142,7 +145,7 @@ namespace ServiceConsole
             while (true)
             {
                 string input = GetUserInput();
-                if (input.ToLower().Equals("q")) break;
+                if (input.ToLower().Equals(Strings.ServiceConsole_Quit)) break;
 
                 ProcessUserQuery(input, faultReportRepository);
             }

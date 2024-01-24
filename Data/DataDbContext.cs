@@ -13,8 +13,10 @@ namespace Data
         public DbSet<Address> Addresses { get; set; }
 
         public DbSet<Position> Positions { get; set; }
+        public DbSet<RepairOperationType> RepairTypes { get; set; }
 
         public DbSet<Employee> Employees { get; set; }
+        public DbSet<RepairOperation> RepairOperations { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -40,6 +42,24 @@ namespace Data
                 .WithMany()
                 .HasForeignKey(e => e.PositionId);
 
+            modelBuilder.Entity<RepairOperation>()
+               .HasOne(ro => ro.Technician)
+               .WithMany()
+               .HasForeignKey(ro => ro.EmployeeId)
+               .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<RepairOperation>()
+                .HasOne(ro => ro.FaultReport)
+                .WithMany()
+                .HasForeignKey(ro => ro.FaultReportId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<RepairOperation>()
+                .HasOne(ro => ro.OperationType)
+                .WithMany(ot => ot.RepairOperations)
+                .HasForeignKey(ro => ro.OperationTypeId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             var address1 = new Address { PostalCode = "7400", City = "Kaposvár", Street = "Virág u.", HouseNumber = "17" };
             var address2 = new Address { PostalCode = "7400", City = "Kaposvár", Street = "Hegyi u.", HouseNumber = "8/A" };
             modelBuilder.Entity<Address>().HasData(
@@ -56,6 +76,24 @@ namespace Data
                 new Position { Name="CEO" },
                 new Position { Name = "Technician" },
                 new Position { Name = "Engineer" }
+            );
+
+            modelBuilder.Entity<Position>().HasData(
+                new RepairOperationType { Name = "Light Bulb replacement" },
+                new RepairOperationType { Name = "Lamp Shade replacement" },
+                new RepairOperationType { Name = "Wire repair" },
+                new RepairOperationType { Name = "Lamp support post replacement" }
+            );
+
+            modelBuilder.Entity<Employee>().HasData(
+                new Employee 
+                { 
+                    Username = "test123", 
+                    PasswordHash = "$11$XCSVi7LPkrp8aSrmvh3twOBQ/ZPI1Unzkj/jYk.vHbagPxC3AMiUe", 
+                    DisplayName="Test Emp", 
+                    Email="test@test.hu", 
+                    PositionId= new Guid("44A47808-8EEC-4436-948E-A21A891C28EF")
+                }
             );
         }
     }
