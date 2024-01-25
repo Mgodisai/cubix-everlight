@@ -7,6 +7,5 @@ namespace DataContextLib.Models
         public string Name { get; set; }
 
         public ICollection<RepairOperation> RepairOperations { get; set; }
-
     }
 }

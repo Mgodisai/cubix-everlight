@@ -43,7 +43,7 @@ namespace Data
                 .HasForeignKey(e => e.PositionId);
 
             modelBuilder.Entity<RepairOperation>()
-               .HasOne(ro => ro.Technician)
+               .HasOne(ro => ro.Employee)
                .WithMany()
                .HasForeignKey(ro => ro.EmployeeId)
                .OnDelete(DeleteBehavior.Restrict);
@@ -67,18 +67,19 @@ namespace Data
             );
 
             modelBuilder.Entity<FaultReport>().HasData(
-                new FaultReport { AddressId = address1.Id, Description = "Description1" },
-                new FaultReport { AddressId = address2.Id, Description = "Description2" },
-                new FaultReport { AddressId = address2.Id, Description = "Description3", Status = FaultReportStatus.Completed }
+                new FaultReport { AddressId = address1.Id, Description = "Description1", ReportedAt = DateTime.Now.AddDays(-3)},
+                new FaultReport { AddressId = address2.Id, Description = "Description2", ReportedAt = DateTime.Now.AddDays(-5) },
+                new FaultReport { AddressId = address2.Id, Description = "Description3", ReportedAt = DateTime.Now.AddDays(-10), Status = FaultReportStatus.Completed }
             );
 
+            var testPosGuid = Guid.NewGuid();
             modelBuilder.Entity<Position>().HasData(
                 new Position { Name="CEO" },
-                new Position { Name = "Technician" },
+                new Position { Name = "Technician", Id = testPosGuid },
                 new Position { Name = "Engineer" }
             );
 
-            modelBuilder.Entity<Position>().HasData(
+            modelBuilder.Entity<RepairOperationType>().HasData(
                 new RepairOperationType { Name = "Light Bulb replacement" },
                 new RepairOperationType { Name = "Lamp Shade replacement" },
                 new RepairOperationType { Name = "Wire repair" },
@@ -89,10 +90,10 @@ namespace Data
                 new Employee 
                 { 
                     Username = "test123", 
-                    PasswordHash = "$11$XCSVi7LPkrp8aSrmvh3twOBQ/ZPI1Unzkj/jYk.vHbagPxC3AMiUe", 
+                    PasswordHash = @"$2a$11$NjdCdbcEMyAVhb40DYQt/OBO..72ZxnWH8.biNBWkQJue4fA3bs.W", 
                     DisplayName="Test Emp", 
                     Email="test@test.hu", 
-                    PositionId= new Guid("44A47808-8EEC-4436-948E-A21A891C28EF")
+                    PositionId= testPosGuid
                 }
             );
         }
