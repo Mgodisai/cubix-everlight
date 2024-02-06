@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace Data.Specifications
+namespace DataContextLib.Specifications
 {
     public interface ISpecification<T>
     {

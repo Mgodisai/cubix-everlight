@@ -3,10 +3,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ClientWebPortal.Models
 {
-    public class EmployeeViewModel
+    public class EmployeeViewModel : BaseViewModel
     {
-        public Guid? Id { get; set; }
-
         [Required(ErrorMessage = "Username is required")]
         public string Username { get; set; }
 

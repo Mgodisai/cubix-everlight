@@ -5,9 +5,9 @@ namespace ClientWebPortal.Service
 {
     public interface IEmployeeService
     {
-        public IEnumerable<EmployeeViewModel>? GetAllEmployees();
-        public IEnumerable<Position> GetAllPositions();
-        void AddEmployee(EmployeeViewModel employeeViewModel);
-        void DeleteById(Guid guid);
+        Task<IEnumerable<EmployeeViewModel>> GetAllEmployeesAsync();
+        Task<IEnumerable<Position>> GetAllPositionsAsync();
+        Task AddEmployeeAsync(EmployeeViewModel employeeViewModel);
+        Task DeleteByIdAsync(Guid guid);
     }
 }

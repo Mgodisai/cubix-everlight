@@ -1,13 +1,12 @@
-﻿using Data.Specifications;
-using DataContextLib.Models;
+﻿using DataContextLib.Models;
+using DataContextLib.Specifications;
 
-namespace RepairOperationService.Specifications
+namespace RepairOperationService.Specifications;
+
+internal class RepairOperationWithFaultReportSpecification : BaseSpecification<RepairOperation>
 {
-    internal class RepairOperationWithFaultReportSpecification : BaseSpecification<RepairOperation>
+    public RepairOperationWithFaultReportSpecification()
     {
-        public RepairOperationWithFaultReportSpecification()
-        {
-            AddInclude(ro => ro.FaultReport);
-        }
+        AddInclude(ro => ro.FaultReport);
     }
 }

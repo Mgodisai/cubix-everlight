@@ -1,12 +1,9 @@
-﻿using Data.Models;
+﻿namespace DataContextLib.Models;
 
-namespace DataContextLib.Models
+public class RepairOperationType : BaseEntity
 {
-    public class RepairOperationType : BaseEntity
-    {
-        public string Name { get; set; }
+    public string Name { get; set; }
 
-        public ICollection<RepairOperation> RepairOperations { get; set; }
-
-    }
+    public ICollection<RepairOperation> RepairOperations { get; set; }
 }
+

@@ -13,6 +13,8 @@
             <th>Display Name</th>
             <th>Email</th>
             <th>Position</th>
+            <th>Created</th>
+            <th>Updated</th>
             <th>Action</th>
         </tr>
     </thead>
@@ -24,6 +26,8 @@
                 <td>@employee.DisplayName</td>
                 <td>@employee.Email</td>
                 <td>@employee.PositionName</td>
+                <td>@employee.CreatedAt</td>
+                <td>@employee.UpdatedAt</td>
                 <td>
                     <a asp-action="Delete" asp-route-id="@employee.Id">Delete</a>
                 </td>

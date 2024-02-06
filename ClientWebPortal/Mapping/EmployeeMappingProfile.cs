@@ -2,15 +2,14 @@
 using ClientWebPortal.Models;
 using DataContextLib.Models;
 
-namespace ClientWebPortal.Mapping
+namespace ClientWebPortal.Mapping;
+
+public class EmployeeMappingProfile : Profile
 {
-    public class EmployeeMappingProfile : Profile
+    public EmployeeMappingProfile()
     {
-        public EmployeeMappingProfile()
-        {
-            CreateMap<Employee, EmployeeViewModel>()
-                .ForMember(dest => dest.PositionName, opt => opt.MapFrom(src => src.Position.Name))
-                .ReverseMap();
-        }
+        CreateMap<Employee, EmployeeViewModel>()
+            .ForMember(dest => dest.PositionName, opt => opt.MapFrom(src => src.Position.Name))
+            .ReverseMap();
     }
 }

@@ -1,5 +1,5 @@
-﻿using Data.Repository;
-using DataContextLib.Models;
+﻿using DataContextLib.Models;
+using DataContextLib.Repository;
 using ServiceConsole.Specifications;
 
 namespace ServiceConsole.Service
@@ -15,7 +15,7 @@ namespace ServiceConsole.Service
 
         public AuthenticationResult Authenticate(string username, string password)
         {
-            var employee = _employeeRepository.FindWithSpecification(new FindEmployeeByUsernameSpecification(username)).FirstOrDefault();
+            var employee = _employeeRepository.FindWithSpecificationAsync(new FindEmployeeByUsernameSpecification(username)).GetAwaiter().GetResult().FirstOrDefault();
             if (employee != null && BCrypt.Net.BCrypt.Verify(password, employee.PasswordHash))
             {
                 return new AuthenticationResult(true, employee.Username, employee.DisplayName, employee.Email);

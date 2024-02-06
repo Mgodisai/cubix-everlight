@@ -1,19 +1,17 @@
 using ClientWebPortal.Service;
-using Data;
 using Microsoft.EntityFrameworkCore;
 using ClientWebPortal.Mapping;
 using Microsoft.AspNetCore.Localization;
 using System.Globalization;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Identity;
-using Data.Models;
-using Data.Repository;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using NLog.Web;
-using NLog;
-using Microsoft.AspNetCore.Components.Forms;
 using ClientWebPortal.Resources;
-using DataContextLib.Models;
+using DataContextLib;
+using DataContextLib.UnitOfWorks;
+using NLog;
+using NLog.Web;
+using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
 namespace ClientWebPortal
 {
@@ -26,6 +24,7 @@ namespace ClientWebPortal
             try
             {
                 var builder = WebApplication.CreateBuilder(args);
+
                 logger.Debug("configure logging");
                 ConfigureLogging(builder);
 
@@ -55,6 +54,8 @@ namespace ClientWebPortal
         private static void ConfigureLogging(WebApplicationBuilder builder)
         {
             builder.Logging.ClearProviders();
+            builder.Logging.ClearProviders();
+            builder.Logging.SetMinimumLevel(LogLevel.Trace);
             builder.Host.UseNLog();
         }
 
@@ -63,6 +64,7 @@ namespace ClientWebPortal
             ConfigureDatabase(builder);
 
             ConfigureIdentity(builder);
+            builder.Services.AddLogging();
             ConfigureRepositories(builder);
 
             builder.Services.AddAutoMapper(typeof(FaultReportMappingProfile));
@@ -81,9 +83,9 @@ namespace ClientWebPortal
         {
             builder.Services.AddDbContext<DataDbContext>(options =>
             {
-                string appDataDirectory = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-                string appDirectory = Path.Combine(appDataDirectory, "EverlightApp");
-                string dbFilePath = Path.Combine(appDirectory, "el.db");
+                var appDataDirectory = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+                var appDirectory = Path.Combine(appDataDirectory, "EverlightApp");
+                var dbFilePath = Path.Combine(appDirectory, "el.db");
                 if (!Directory.Exists(appDirectory))
                 {
                     Directory.CreateDirectory(appDirectory);
@@ -94,28 +96,14 @@ namespace ClientWebPortal
 
         private static void ConfigureRepositories(WebApplicationBuilder builder)
         {
-            builder.Services.AddScoped<IRepository<FaultReport>>(
-                provider =>
-                {
-                    var dbContext = provider.GetRequiredService<DataDbContext>();
-                    return new DataRepository<FaultReport>(dbContext);
-                });
+            builder.Services.AddScoped<IUnitOfWork<DataDbContext>>(
+                   provider =>
+                   {
+                       var dbContext = provider.GetRequiredService<DataDbContext>();
+                       return new UnitOfWork<DataDbContext>(dbContext);
+                   });
             builder.Services.AddScoped<IFaultReportService, FaultReportService>();
-
-            builder.Services.AddScoped<IRepository<Employee>>(
-                provider =>
-                {
-                    var dbContext = provider.GetRequiredService<DataDbContext>();
-                    return new DataRepository<Employee>(dbContext);
-                });
             builder.Services.AddScoped<IEmployeeService, EmployeeService>();
-
-            builder.Services.AddScoped<IRepository<Position>>(
-                provider =>
-                {
-                    var dbContext = provider.GetRequiredService<DataDbContext>();
-                    return new DataRepository<Position>(dbContext);
-                });
         }
 
         private static void ConfigureIdentity(WebApplicationBuilder builder)
@@ -161,7 +149,7 @@ namespace ClientWebPortal
                     {
                         if (context.Properties.Items.TryGetValue("IsPersistent", out string? value))
                         {
-                            bool isPersistent = bool.Parse(value ?? "false");
+                            var isPersistent = bool.Parse(value ?? "false");
                             context.Properties.IsPersistent = isPersistent;
                         }
                         return Task.CompletedTask;

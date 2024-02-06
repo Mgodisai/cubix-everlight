@@ -1,9 +1,6 @@
-﻿using Data.Models;
+﻿namespace DataContextLib.Models;
 
-namespace DataContextLib.Models
+public class Position : BaseEntity
 {
-    public class Position : BaseEntity
-    {
-        public string Name { get; set; }
-    }
+    public string Name { get; set; }
 }
