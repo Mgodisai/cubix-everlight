@@ -1,7 +1,7 @@
 ﻿using DataContextLib.Models;
 using DataContextLib.Specifications;
 
-namespace ServiceConsole.Specifications;
+namespace ConsoleAuthenticationService.Specifications;
 
 internal class FindEmployeeByUsernameSpecification : BaseSpecification<Employee>
 {

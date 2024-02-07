@@ -8,5 +8,7 @@ internal class RepairOperationWithFaultReportSpecification : BaseSpecification<R
     public RepairOperationWithFaultReportSpecification()
     {
         AddInclude(ro => ro.FaultReport);
+        AddInclude(ro=>ro.OperationType);
+        AddInclude(ro=>ro.Technician);
     }
 }

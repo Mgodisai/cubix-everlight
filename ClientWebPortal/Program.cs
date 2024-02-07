@@ -24,6 +24,7 @@ namespace ClientWebPortal
             try
             {
                 var builder = WebApplication.CreateBuilder(args);
+                //builder.WebHost.UseUrls("http://*:80");
 
                 logger.Debug("configure logging");
                 ConfigureLogging(builder);

@@ -75,6 +75,7 @@ public class DataDbContext(DbContextOptions<DataDbContext> options) : IdentityDb
         );
 
         modelBuilder.Entity<RepairOperationType>().HasData(
+            new RepairOperationType { Name = "Undefined", CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow },
             new RepairOperationType { Name = "Light Bulb replacement", CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow },
             new RepairOperationType { Name = "Lamp Shade replacement", CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow },
             new RepairOperationType { Name = "Wire repair", CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow },
