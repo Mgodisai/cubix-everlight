@@ -2,11 +2,10 @@
 
 namespace RepairOperationService.Specifications;
 
-internal class RepairOperationByEmployeeSpec : RepairOperationWithFaultReportSpecification
+internal class RepairOperationByEmployeeNameSpec : RepairOperationWithFaultReportSpecification
 {
-    public RepairOperationByEmployeeSpec(Guid employeeGuid)
+    public RepairOperationByEmployeeNameSpec(string employeeName)
     {
-        AddCriteria(ro=>ro.EmployeeId==employeeGuid );
-        AddCriteria(ro=>ro.FaultReport.Status == FaultReportStatus.InProgress);
+        AddCriteria(ro=>ro.Employee.DisplayName == employeeName);
     }
 }

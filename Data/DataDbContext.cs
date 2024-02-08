@@ -39,7 +39,7 @@ public class DataDbContext(DbContextOptions<DataDbContext> options) : IdentityDb
             .HasForeignKey(e => e.PositionId);
 
         modelBuilder.Entity<RepairOperation>()
-           .HasOne(ro => ro.Technician)
+           .HasOne(ro => ro.Employee)
            .WithMany()
            .HasForeignKey(ro => ro.EmployeeId)
            .OnDelete(DeleteBehavior.Restrict);

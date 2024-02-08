@@ -9,7 +9,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Data\DataContextLib.csproj" />
+    <ProjectReference Include="..\RepairOperationService\RepairOperationService.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="CustomControl\" />
   </ItemGroup>
 
 </Project>

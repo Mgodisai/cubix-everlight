@@ -5,7 +5,7 @@ using RepairOperationService.Specifications;
 
 namespace RepairOperationService;
 
-public class RepairOperationService(IUnitOfWork<DataDbContext> unitOfWork)
+public class RepairOperationService(IUnitOfWork<DataDbContext> unitOfWork) : IRepairOperationService
 {
     public async Task<IEnumerable<RepairOperation>> ListTakenReportsByEmployee(Employee? userAuthEmployee)
     {
@@ -35,7 +35,7 @@ public class RepairOperationService(IUnitOfWork<DataDbContext> unitOfWork)
 
         if (repairOperation.Any())
         {
-            throw new InvalidOperationException($"Fault report has already been assigned with guid: {repairOperation.First().Id} to {repairOperation.First().Technician.DisplayName}");
+            throw new InvalidOperationException($"Fault report has already been assigned with guid: {repairOperation.First().Id} to {repairOperation.First().Employee.DisplayName}");
         }
 
         var faultReport = 
@@ -65,7 +65,7 @@ public class RepairOperationService(IUnitOfWork<DataDbContext> unitOfWork)
             FaultReportId = faultReportId,
             OperationType = repairOperationType,
             EmployeeId = employee.Id,
-            Technician = employee
+            Employee = employee
         };
     }
 
@@ -120,7 +120,7 @@ public class RepairOperationService(IUnitOfWork<DataDbContext> unitOfWork)
                 await opTypeRepo.InsertAsync(newOpType);
                 operationType = newOpType;
             }
-            updatedRepairOperation.EndTime = DateTime.UtcNow;
+            updatedRepairOperation.EndDate = DateTime.UtcNow;
             updatedRepairOperation.FaultReport.Status = FaultReportStatus.Completed;
             updatedRepairOperation.OperationType = operationType;
             updatedRepairOperation.OperationTypeId = operationType.Id;
@@ -135,5 +135,52 @@ public class RepairOperationService(IUnitOfWork<DataDbContext> unitOfWork)
             throw new InvalidOperationException("A mentés során hiba merült fel!");
         }
 
+    }
+
+    public async Task<IEnumerable<RepairOperation>> GetAllOperations()
+    {
+        return await unitOfWork
+            .GetRepository<RepairOperation>()
+            .FindWithSpecificationAsync(new RepairOperationWithFaultReportSpecification());
+    }
+
+    public async Task<IEnumerable<RepairOperation>> GetOperationsByEmployee(string employeeName)
+    {
+        return await unitOfWork
+            .GetRepository<RepairOperation>()
+            .FindWithSpecificationAsync(new RepairOperationByEmployeeNameSpec(employeeName));
+    }
+
+    public Task<IEnumerable<RepairOperation>> GetOperationsByDate(DateTime date)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<IEnumerable<RepairOperation>> GetOperationsByWorkType(string workType)
+    {
+        return await unitOfWork
+            .GetRepository<RepairOperation>()
+            .FindWithSpecificationAsync(new RepairOperationByOperationTypeNameSpec(workType));
+    }
+
+    public async Task<IEnumerable<Employee>> GetAllEmployees()
+    {
+        return await unitOfWork
+            .GetRepository<Employee>()
+            .GetAllAsync();
+    }
+
+    public async Task<IEnumerable<RepairOperationType>> GetAllRepairOperationTypes()
+    {
+        return await unitOfWork
+            .GetRepository<RepairOperationType>()
+            .GetAllAsync();
+    }
+
+    public async Task<IEnumerable<RepairOperation>> GetOperationsByStatus(FaultReportStatus status)
+    {
+        return await unitOfWork
+            .GetRepository<RepairOperation>()
+            .FindWithSpecificationAsync(new RepairOperationByStatusSpec(status));
     }
 }
