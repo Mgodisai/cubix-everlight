@@ -1,17 +1,16 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
-namespace Data.Models
+namespace DataContextLib.Models;
+
+public abstract class BaseEntity
 {
-    public abstract class BaseEntity
-    {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public Guid Id { get; set; }
-
-        public BaseEntity()
-        {
-            Id= Guid.NewGuid();
-        }
-    }
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public Guid Id { get; set; } = Guid.NewGuid();
+    [JsonIgnore]
+    public DateTime CreatedAt { get; set; }
+    [JsonIgnore]
+    public DateTime UpdatedAt { get; set; }
 }

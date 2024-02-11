@@ -49,7 +49,7 @@
                     </button>
                 </form>
                 <div>
-                    @if (SignInManager.IsSignedIn(User))
+                    @if (User is not null && SignInManager.IsSignedIn(User))
                     {
                         <span>@User?.Identity?.Name</span>
                         <form asp-controller="Account" asp-action="Logout" method="post">

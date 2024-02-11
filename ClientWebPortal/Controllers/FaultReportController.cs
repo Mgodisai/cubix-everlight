@@ -13,16 +13,16 @@ namespace ClientWebPortal.Controllers
         private readonly ILogger<FaultReportController> _logger = logger;
 
         [Authorize]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var reports = _faultReportService.GetAllReports();
-            return View(reports);
+            var reports = await _faultReportService.GetAllReportsAsync();
+            return View(reports.OrderBy(r=>r.ReportedAt));
         }
 
         [Authorize]
-        public IActionResult Details(Guid id)
+        public async Task<IActionResult> Details(Guid id)
         {
-            var report = _faultReportService.GetReportById(id);
+            var report = await _faultReportService.GetReportByIdAsync(id);
             return View(report);
         }
         public IActionResult Create()
@@ -37,7 +37,7 @@ namespace ClientWebPortal.Controllers
             if (ModelState.IsValid)
             {
                 faultReportViewModel.ReportedAt = DateTime.UtcNow;
-                await _faultReportService.AddFaultReport(faultReportViewModel);
+                await _faultReportService.AddFaultReportAsync(faultReportViewModel);
                 return RedirectToAction("Index");
             }
             else

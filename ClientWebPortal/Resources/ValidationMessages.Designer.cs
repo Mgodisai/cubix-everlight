@@ -124,7 +124,7 @@ namespace ClientWebPortal.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A két jelszó nem egyezik meg.
+        ///   Looks up a localized string similar to A két jelszó nem egyezik meg..
         /// </summary>
         public static string PasswordMatchError {
             get {

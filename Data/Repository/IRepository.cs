@@ -1,14 +1,14 @@
-﻿using Data.Specifications;
+﻿using DataContextLib.Specifications;
 
-namespace Data.Repository
+namespace DataContextLib.Repository
 {
     public interface IRepository<T> where T : class
     {
-        T? GetById(Guid id);
-        IEnumerable<T> FindWithSpecification(ISpecification<T> spec);
-        IEnumerable<T> GetAll();
-        T Add(T entity);
-        void Delete(T entity);
-        void Update(T entity);
+        Task<T?> GetByIdAsync(Guid id);
+        Task<IEnumerable<T>> FindWithSpecificationAsync(ISpecification<T> spec);
+        Task<IEnumerable<T>> GetAllAsync();
+        Task<bool> InsertAsync(T entity);
+        Task<bool> DeleteAsync(Guid id);
+        Task<bool> UpdateAsync(T entity);
     }
 }

@@ -1,9 +1,8 @@
-﻿namespace Data.Models
+﻿namespace DataContextLib.Models;
+
+public enum FaultReportStatus
 {
-    public enum FaultReportStatus
-    {
-        New,
-        InProgress,
-        Completed
-    }
+    New,
+    InProgress,
+    Completed
 }

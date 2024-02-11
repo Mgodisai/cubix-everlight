@@ -4,6 +4,8 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>de6a9a95-a837-401d-9202-346283d83471</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
 
   <ItemGroup>
@@ -11,14 +13,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="Resources\Controllers\HomeController.resx" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="12.0.1" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.5" />
     <PackageReference Include="NLog.Web.AspNetCore" Version="5.3.8" />
   </ItemGroup>
 
@@ -31,20 +30,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Resources\ValidationMessages.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>ValidationMessages.resx</DependentUpon>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
     <EmbeddedResource Update="Resources\ValidationMessages.en-US.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
+      <Generator></Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Resources\ValidationMessages.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>ValidationMessages.Designer.cs</LastGenOutput>
+      <Generator></Generator>
     </EmbeddedResource>
   </ItemGroup>
 

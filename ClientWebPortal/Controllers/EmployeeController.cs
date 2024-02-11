@@ -16,17 +16,18 @@ namespace ClientWebPortal.Controllers
             _employeeService = employeeService;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var employees = _employeeService.GetAllEmployees();
+            var employees = await _employeeService.GetAllEmployeesAsync();
             return View(employees);
         }
 
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            var positions = await _employeeService.GetAllPositionsAsync();
             var model = new EmployeeViewModel
             {
-                Positions = _employeeService.GetAllPositions().Select(p => new SelectListItem
+                Positions = positions.Select(p => new SelectListItem
                 {
                     Value = p.Id.ToString(),
                     Text = p.Name
@@ -40,7 +41,7 @@ namespace ClientWebPortal.Controllers
         {
             if (ModelState.IsValid)
             {
-                _employeeService.AddEmployee(model);
+                _employeeService.AddEmployeeAsync(model);
 
                 return RedirectToAction("Index");
             }
@@ -49,7 +50,7 @@ namespace ClientWebPortal.Controllers
 
         public IActionResult Delete(Guid id)
         {
-            _employeeService.DeleteById(id);
+            _employeeService.DeleteByIdAsync(id);
             return RedirectToAction("Index");
         }
     }

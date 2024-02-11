@@ -2,35 +2,29 @@
 using System.Net.Mail;
 using System.Net;
 
-namespace ClientWebPortal.Service
+namespace ClientWebPortal.Service;
+
+public class EmailService(IOptions<EmailSettings> emailSettings) : IEmailService
 {
-    public class EmailService : IEmailService
+    private readonly EmailSettings _emailSettings = emailSettings.Value;
+
+    public async Task SendEmailAsync(string to, string subject, string body)
     {
-        private readonly EmailSettings _emailSettings;
-
-        public EmailService(IOptions<EmailSettings> emailSettings)
+        using var smtpClient = new SmtpClient(_emailSettings.SmtpServer, _emailSettings.SmtpPort)
         {
-            _emailSettings = emailSettings.Value;
-        }
+            Credentials = new NetworkCredential(_emailSettings.SmtpUsername, _emailSettings.SmtpPassword),
+            EnableSsl = true
+        };
 
-        public async Task SendEmailAsync(string to, string subject, string body)
+        var mailMessage = new MailMessage
         {
-            using var smtpClient = new SmtpClient(_emailSettings.SmtpServer, _emailSettings.SmtpPort)
-            {
-                Credentials = new NetworkCredential(_emailSettings.SmtpUsername, _emailSettings.SmtpPassword),
-                EnableSsl = true
-            };
+            From = new MailAddress(_emailSettings.FromEmail),
+            Subject = subject,
+            Body = body,
+            IsBodyHtml = true
+        };
+        mailMessage.To.Add(to);
 
-            var mailMessage = new MailMessage
-            {
-                From = new MailAddress(_emailSettings.FromEmail),
-                Subject = subject,
-                Body = body,
-                IsBodyHtml = true
-            };
-            mailMessage.To.Add(to);
-
-            await smtpClient.SendMailAsync(mailMessage);
-        }
+        await smtpClient.SendMailAsync(mailMessage);
     }
 }

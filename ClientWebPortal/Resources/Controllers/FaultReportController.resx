@@ -121,7 +121,7 @@
     <value>Hibabejelentés - Everlight</value>
   </data>
   <data name="EmailGreetingLine" xml:space="preserve">
-    <value> Tisztelt {0}!</value>
+    <value>Tisztelt {0},</value>
   </data>
   <data name="EmailFirstLine" xml:space="preserve">
     <value>Köszönjük, hogy bejelentette a hibát!</value>
@@ -139,12 +139,12 @@
     <value>Email cím</value>
   </data>
   <data name="EmailFurtherInfoLine" xml:space="preserve">
-    <value>Felvesszük Önnel a kapcsolatot, ha előrehaladás történt a hibával kapcsolatban vagy további információra lenne szükség!</value>
+    <value>Felvesszük Önnel a kapcsolatot, ha előrehaladás történt a hibával kapcsolatban vagy további információra lenne szükség.</value>
   </data>
   <data name="EmailFarewellLine" xml:space="preserve">
     <value>Tisztelettel:</value>
   </data>
   <data name="EmailSignature" xml:space="preserve">
-    <value>Everlight Kft.</value>
+    <value>Everlight Kft</value>
   </data>
 </root>

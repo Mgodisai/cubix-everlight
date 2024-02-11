@@ -1,27 +1,25 @@
 ﻿using AutoMapper;
 using ClientWebPortal.Models;
 using ClientWebPortal.Service.Specifications;
-using Data.Models;
-using Data.Repository;
+using DataContextLib;
 using DataContextLib.Models;
+using DataContextLib.UnitOfWorks;
 
 namespace ClientWebPortal.Service
 {
 
     public class EmployeeService : IEmployeeService
     {
-        private readonly IRepository<Employee> _employeeRepository;
-        private readonly IRepository<Position> _positionRepository;
+        private readonly IUnitOfWork<DataDbContext> _unitOfWork;
         private readonly IMapper _mapper;
 
-        public EmployeeService(IRepository<Employee> employeeRepository, IMapper mapper, IRepository<Position> positionRepository)
+        public EmployeeService(IMapper mapper, IUnitOfWork<DataDbContext> unitOfWork)
         {
-            _employeeRepository = employeeRepository;
             _mapper = mapper;
-            _positionRepository = positionRepository;
+            _unitOfWork = unitOfWork;
         }
 
-        public void AddEmployee(EmployeeViewModel employeeViewModel)
+        public async Task AddEmployeeAsync(EmployeeViewModel employeeViewModel)
         {
             var employee = new Employee
             {
@@ -31,28 +29,44 @@ namespace ClientWebPortal.Service
                 Email = employeeViewModel.Email,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(employeeViewModel.Password)
             };
-            _employeeRepository.Add(employee);
-        }
-
-        public void DeleteById(Guid employeeId)
-        {
-            var employee = _employeeRepository.GetById(employeeId);
-            if (employee is not null)
+            try
             {
-                _employeeRepository.Delete(employee);
+                await _unitOfWork.CreateTransactionAsync();
+                await _unitOfWork.GetRepository<Employee>().InsertAsync(employee);
+                await _unitOfWork.SaveAsync();
+                await _unitOfWork.CommitAsync();
+            }
+            catch (Exception)
+            {
+                await _unitOfWork.RollbackAsync();
             }
         }
 
-        public IEnumerable<EmployeeViewModel>? GetAllEmployees()
+        public async Task DeleteByIdAsync(Guid employeeId)
+        {
+            try
+            {
+                await _unitOfWork.CreateTransactionAsync();
+                var result = await _unitOfWork.GetRepository<Employee>().DeleteAsync(employeeId);
+                await _unitOfWork.SaveAsync();
+                await _unitOfWork.CommitAsync();
+            }
+            catch (Exception)
+            {
+                await _unitOfWork.RollbackAsync();
+            }
+        }
+
+        public async Task<IEnumerable<EmployeeViewModel>> GetAllEmployeesAsync()
         {
                 List<EmployeeViewModel> employeeViewModels = [];
-                var result = _employeeRepository.FindWithSpecification(new EmployeeWithPositionSpecification());
+                var result = await _unitOfWork.GetRepository<Employee>().FindWithSpecificationAsync(new EmployeeWithPositionSpecification());
                 return result.Select(e => _mapper.Map<EmployeeViewModel>(e)).ToList();
         }
 
-        public IEnumerable<Position> GetAllPositions()
+        public async Task<IEnumerable<Position>> GetAllPositionsAsync()
         {
-            return _positionRepository.GetAll();
+            return await _unitOfWork.GetRepository<Position>().GetAllAsync();
         }
 
     }

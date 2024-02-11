@@ -1,105 +1,52 @@
 ﻿using Common;
-using Data;
-using Data.Models;
-using Data.Repository;
-using DataContextLib.Models;
-using Microsoft.EntityFrameworkCore;
-using ServiceConsole.Service;
-using ServiceConsole.Specifications;
-using System.Text;
-using System.Text.RegularExpressions;
 using static Common.ConsoleExtensions;
+using System.Text.Json;
+using ClientWebPortal.Models.Dtos;
 
-namespace ServiceConsole
+namespace ServiceConsole;
+
+internal partial class Program
 {
-    internal partial class Program
+    static async Task Main(string[] args)
     {
-        private const string regexPatternBudapestDistrict = @"^(1(0\d|1\d|2[0-3]))$";
-        private const string regexPatternHungarianPostalCode = @"^[1-9]\d{3}$";
-        private const string regexPatternForDays = @"^\d{1,2}$";
-        static int Main(string[] args)
+        WriteLineSuccess(Strings.General_CompanyName + " - " + Strings.ServiceConsole_AppName);
+        await RunFaultReportQueryLoop();
+    }
+
+    private static JsonSerializerOptions GetOptions()
+    {
+        return new JsonSerializerOptions
         {
-            WriteLineSuccess(Strings.General_CompanyName + " - "+Strings.ServiceConsole_AppName);
-            using var dbContext = ConfigureDbContext();
-            var authService = new ConsoleAuthService(new DataRepository<Employee>(dbContext));
+            PropertyNameCaseInsensitive = true
+        };
+    }
 
-            var authResult = PerformAuthentication(authService);
-
-            if (authResult.IsAuthenticated)
-            {
-                Console.Clear();
-                WriteLineSuccess(Strings.General_SuccessfulLogin);
-                WriteLineSuccess(String.Format(Strings.ServiceConsole_Greeting, authResult.DisplayName, authResult.Username));
-            }
-            else
-            {
-                WriteLineError(Strings.Error_BadCredentials);
-                return 1;
-            }
-
-            RunFaultReportQueryLoop(dbContext);
-            return 0;
-        }
-
-        private static AuthenticationResult PerformAuthentication(ConsoleAuthService authService)
+    private static async Task ProcessUserQuery(string input, JsonSerializerOptions options)
+    {
+        var baseUrl = "https://localhost:7199/api/FaultReport";
+        using var client = new HttpClient();
+        try
         {
-            WriteWarning(Strings.General_Username+": ");
-            var username = Console.ReadLine() ?? string.Empty;
-
-            WriteWarning(Strings.General_Password+": ");
-            var password = ReadPassword();
-
-            return authService.Authenticate(username, password);
-        }
-
-        private static string ReadPassword()
-        {
-            var password = new StringBuilder();
-            while (true)
+            var uriBuilder = new UriBuilder(baseUrl)
             {
-                var key = Console.ReadKey(intercept: true);
-                if (key.Key == ConsoleKey.Enter) break;
-                if (key.Key == ConsoleKey.Backspace && password.Length > 0) password.Remove(password.Length - 1, 1);
-                else if (key.Key != ConsoleKey.Backspace) password.Append(key.KeyChar);
-            }
+                Query = $"specialQuery={input}"
+            };
 
-            Console.WriteLine();
-            return password.ToString();
-        }
+            HttpResponseMessage response = await client.GetAsync(uriBuilder.Uri);
 
-        private static IEnumerable<FaultReport> ExecuteQuery(string input, QueryType queryType, IRepository<FaultReport> repository)
-        {
-            switch (queryType)
+            if (response.IsSuccessStatusCode)
             {
-                case QueryType.DistrictOfBudapest:
-                    return repository.FindWithSpecification(new FaultReportByDistrictSpecification(input));
-                case QueryType.HungarianPostalCode:
-                    return repository.FindWithSpecification(new FaultReportByNormalPostalCodeSpecification(input));
-                case QueryType.Days:
-                    var result = int.TryParse(input, out int days);
-                    if (!result) break;
-                    return repository.FindWithSpecification(new FaultReportByDaysBeforeTodaySpecification(days));
-                case QueryType.Invalid:
-                default:
-                    break;
-            }
-            return new List<FaultReport>();
-        }
+                var content = await response.Content.ReadAsStringAsync();
+                var faultReports = JsonSerializer.Deserialize<IEnumerable<FaultReportDto>>(content, options);
 
-        private static void ProcessUserQuery(string input, IRepository<FaultReport> repository)
-        {
-            var queryType = QueryTypeSelector(input);
-            if (queryType != QueryType.Invalid)
-            {
-                var result = ExecuteQuery(input, queryType, repository);
-                if (result.Any())
+                if (faultReports is not null && faultReports.Any())
                 {
-                    foreach (var fr in result)
+                    foreach (var fr in faultReports)
                     {
-                        if (fr.Status==FaultReportStatus.New)
-                            WriteLineSuccess(fr.ToString());
-                        if (fr.Status == FaultReportStatus.InProgress)
-                            WriteLineWarning(fr.ToString());
+                        var address = $"{fr.AddressDto?.PostalCode} {fr.AddressDto?.City}, {fr.AddressDto?.Street} {fr.AddressDto?.HouseNumber}";
+                        var print = $"FaultReport ({fr.Status}): {address} - {fr.Description.TruncateString(20)}, reported: {fr.ReportedAt}, guid: {fr.Id}";
+
+                            WriteLineSuccess(print);
                     }
                 }
                 else
@@ -109,81 +56,29 @@ namespace ServiceConsole
             }
             else
             {
-                WriteLineError(Strings.General_BadQuery);
+                Console.WriteLine($"Failed to fetch data. Status code: {response.StatusCode}");
             }
         }
-
-        private static DataDbContext ConfigureDbContext()
+        catch (HttpRequestException e)
         {
-            var optionsBuilder = new DbContextOptionsBuilder<DataDbContext>();
-            string appDataDirectory = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            string appDirectory = Path.Combine(appDataDirectory, Strings.General_AppDataDirectory);
-            string dbFilePath = Path.Combine(appDirectory, Strings.General_DbName);
-
-            if (!Directory.Exists(appDirectory))
-            {
-                Directory.CreateDirectory(appDirectory);
-            }
-
-            optionsBuilder.UseSqlite($"Data Source={dbFilePath}");
-            var context = new DataDbContext(optionsBuilder.Options);
-            context.Database.EnsureCreated();
-            context.Database.Migrate();
-            return context;
+            Console.WriteLine($"Request exception: {e.Message}");
         }
-
-        private static string GetUserInput()
-        {
-            Console.WriteLine(string.Format(Strings.ServiceConsole_Info, Strings.ServiceConsole_Quit));
-            return Console.ReadLine() ?? string.Empty;
-        }
-
-        private static void RunFaultReportQueryLoop(DataDbContext context)
-        {
-            var faultReportRepository = new DataRepository<FaultReport>(context);
-
-            while (true)
-            {
-                string input = GetUserInput();
-                if (input.ToLower().Equals(Strings.ServiceConsole_Quit)) break;
-
-                ProcessUserQuery(input, faultReportRepository);
-            }
-        }
-
-        private static QueryType QueryTypeSelector(string? input)
-        {
-            if (BudapestDistrictRegex().IsMatch(input ?? string.Empty))
-            {
-                return QueryType.DistrictOfBudapest;
-            }
-            else if (HungarianPostalCodeRegex().IsMatch(input ?? string.Empty))
-            {
-                return QueryType.HungarianPostalCode;
-            }
-            else if (DaysPatternRegex().IsMatch(input ?? string.Empty))
-            {
-                return QueryType.Days;
-            }
-            else
-            {
-                return QueryType.Invalid;
-            }
-        }
-
-        [GeneratedRegex(regexPatternBudapestDistrict)]
-        private static partial Regex BudapestDistrictRegex();
-        [GeneratedRegex(regexPatternHungarianPostalCode)]
-        private static partial Regex HungarianPostalCodeRegex();
-        [GeneratedRegex(regexPatternForDays)]
-        private static partial Regex DaysPatternRegex();
     }
 
-    public enum QueryType
+    private static string GetUserInput()
     {
-        HungarianPostalCode,
-        DistrictOfBudapest,
-        Days,
-        Invalid = 99
+        Console.WriteLine(string.Format(Strings.ServiceConsole_Info, Strings.ServiceConsole_Quit));
+        return Console.ReadLine() ?? string.Empty;
+    }
+
+    private static async Task RunFaultReportQueryLoop()
+    {
+        while (true)
+        {
+            string input = GetUserInput();
+            if (input.ToLower().Equals(Strings.ServiceConsole_Quit)) break;
+
+            await ProcessUserQuery(input, GetOptions());
+        }
     }
 }

@@ -1,14 +1,12 @@
-﻿using Data.Specifications;
-using DataContextLib.Models;
+﻿using DataContextLib.Models;
+using DataContextLib.Specifications;
 
-namespace ClientWebPortal.Service.Specifications
+namespace ClientWebPortal.Service.Specifications;
+
+public class EmployeeWithPositionSpecification : BaseSpecification<Employee>
 {
-    public class EmployeeWithPositionSpecification : BaseSpecification<Employee>
+    public EmployeeWithPositionSpecification()
     {
-        public EmployeeWithPositionSpecification()
-        {
-            AddInclude(e => e.Position);
-        }
+        AddInclude(e => e.Position);
     }
-
 }

@@ -1,0 +1,59 @@
+﻿<Window x:Class="StatisticsUI.View.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:StatisticsUI"
+        xmlns:viewmodel="clr-namespace:StatisticsUI.ViewModel"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance Type=viewmodel:MainWindowViewModel}"
+        Title="Munka Statisztikák" Width="1800"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        Background="{DynamicResource MaterialDesignPaper}"
+        WindowStyle="None" AllowsTransparency="True"
+        FontFamily="{DynamicResource MaterialDesignFont}">
+    <DockPanel>
+        <Border DockPanel.Dock="Top" Background="{DynamicResource PrimaryHueDarkBrush}" Height="60" MouseLeftButtonDown="Window_MouseLeftButtonDown">
+            <Grid>
+                <TextBlock Text="Javítás statisztika" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10" Foreground="White" FontSize="16"/>
+                <Button Content="X" HorizontalAlignment="Right" Width="40" Height="40" Margin="5" Foreground="White" Background="Transparent" Click="CloseButton_Click"/>
+            </Grid>
+        </Border>
+        <DockPanel>
+            <StackPanel DockPanel.Dock="Left" Width="230" Margin="10" Background="{DynamicResource MaterialDesignCardBackground}" OpacityMask="Black" Opacity="0.84">
+                <StackPanel.Effect>
+                    <DropShadowEffect/>
+                </StackPanel.Effect>
+                <RadioButton x:Name="rbEmployee" Content="Munkatársak szerint" GroupName="Filters" Margin="5,5,0,0"  Style="{DynamicResource MaterialDesignTabRadioButtonLeft}" Foreground="Black"/>
+                <RadioButton x:Name="rbDate" Content="Dátum szerint" GroupName="Filters" Margin="5,5,0,0"  Style="{DynamicResource MaterialDesignTabRadioButtonLeft}" Foreground="Black"/>
+                <RadioButton x:Name="rbWorkType" Content="Munkatípusok szerint" GroupName="Filters" Margin="5,5,0,0"  Style="{DynamicResource MaterialDesignTabRadioButtonLeft}" Foreground="Black"/>
+                <RadioButton x:Name="rbWorkStatus" Content="Státusz szerint" GroupName="Filters" Margin="5,5,0,0" Style="{DynamicResource MaterialDesignTabRadioButtonLeft}" Foreground="Black"/>
+                <RadioButton x:Name="rbClear" Content="Nincs szűrés" GroupName="Filters" IsChecked="True" Margin="5,5,0,0" Style="{DynamicResource MaterialDesignTabRadioButtonLeft}" Foreground="Black"/>
+                <StackPanel x:Name="panelFilters" Margin="10"/>
+                <Button Content="Export" Command="{Binding ExportCommand}" Margin="20" Style="{DynamicResource MaterialDesignRaisedAccentButton}">
+                    <Button.Effect>
+                        <DropShadowEffect/>
+                    </Button.Effect>
+                </Button>
+            </StackPanel>
+            <DataGrid x:Name="DataGridRepairOperations" AutoGenerateColumns="False" Margin="10" 
+               CanUserAddRows="False" HeadersVisibility="Column" ItemsSource="{Binding RepairOperations}" IsSynchronizedWithCurrentItem="False" HorizontalGridLinesBrush="#FF635E5E" AlternationCount="1" IsReadOnly="True">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="ID" Binding="{Binding Id}" />
+                    <DataGridTextColumn Width="500" Header="FaultReport" Binding="{Binding FaultReport}">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="ToolTip" Value="{Binding FaultReport}" />
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Header="Employee" Binding="{Binding Employee}" />
+                    <DataGridTextColumn Header="Start Date" Binding="{Binding StartDate}" />
+                    <DataGridTextColumn Header="End Date" Binding="{Binding EndDate}" />
+                    <DataGridTextColumn Header="Operation Type" Binding="{Binding OperationType}" />
+                </DataGrid.Columns>
+            </DataGrid>
+        </DockPanel>
+    </DockPanel>
+</Window>

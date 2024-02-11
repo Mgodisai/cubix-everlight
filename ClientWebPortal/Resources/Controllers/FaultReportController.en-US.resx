@@ -124,7 +124,7 @@
     <value>Dear {0},</value>
   </data>
   <data name="EmailFirstLine" xml:space="preserve">
-    <value>Thank you for submitting your fault report.</value>
+    <value>Thank you for submitting your fault report!</value>
   </data>
   <data name="EmailDetails" xml:space="preserve">
     <value>Details</value>
@@ -142,7 +142,7 @@
     <value>We may contact you if we need further information or to provide updates regarding your report.</value>
   </data>
   <data name="EmailFarewellLine" xml:space="preserve">
-    <value>Best regards,</value>
+    <value>Best regards:</value>
   </data>
   <data name="EmailSignature" xml:space="preserve">
     <value>Everlight</value>
