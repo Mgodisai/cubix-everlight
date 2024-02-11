@@ -148,7 +148,7 @@
     <value>A jelszó legalább {2}, de legfeljebb {1} karakter hosszú lehet.</value>
   </data>
   <data name="PasswordMatchError" xml:space="preserve">
-    <value>A két jelszó nem egyezik meg</value>
+    <value>A két jelszó nem egyezik meg.</value>
   </data>
   <data name="ConfirmPasswordRequired" xml:space="preserve">
     <value>A megerősítő jelszó megadása kötelező</value>

@@ -10,11 +10,12 @@ public class RepairOperationService(IUnitOfWork<DataDbContext> unitOfWork) : IRe
     public async Task<IEnumerable<RepairOperation>> ListTakenReportsByEmployee(Employee? userAuthEmployee)
     {
         var repairOperationRepository = unitOfWork.GetRepository<RepairOperation>();
+        if (userAuthEmployee is null) { return Enumerable.Empty<RepairOperation>(); }
         var result = await repairOperationRepository.FindWithSpecificationAsync(new RepairOperationByEmployeeSpec(userAuthEmployee.Id));
         return result;
     }
 
-    public async Task<bool> AssignFaultReportToEmployee(Guid faultReportId, Employee employee)
+    public async Task<bool> AssignFaultReportToEmployee(Guid faultReportId, Employee? employee)
     {
         if (employee == null) throw new InvalidOperationException("Employee not found");
 
@@ -35,16 +36,14 @@ public class RepairOperationService(IUnitOfWork<DataDbContext> unitOfWork) : IRe
 
         if (repairOperation.Any())
         {
-            throw new InvalidOperationException($"Fault report has already been assigned with guid: {repairOperation.First().Id} to {repairOperation.First().Employee.DisplayName}");
+            throw new InvalidOperationException($"Fault report has already been assigned with guid: {repairOperation.First().Id} to {repairOperation.First()?.Employee?.DisplayName}");
         }
 
         var faultReport = 
             await unitOfWork
                 .GetRepository<FaultReport>()
                 .GetByIdAsync(faultReportId);
-        if (faultReport == null) throw new InvalidOperationException("Fault report cannot be found");
-
-        return faultReport;
+        return faultReport ?? throw new InvalidOperationException("Fault report cannot be found");
     }
 
     private async Task<RepairOperationType> EnsureRepairOperationType()
@@ -90,7 +89,12 @@ public class RepairOperationService(IUnitOfWork<DataDbContext> unitOfWork) : IRe
     public async Task CompletedRepairOperationAsync(Guid parsedGuid, Employee? userAuthEmployee, string operation)
     {
         var repo = unitOfWork.GetRepository<RepairOperation>();
-        var repairOperation = await unitOfWork.GetRepository<RepairOperation>()
+        if (userAuthEmployee is null)
+        {
+            throw new InvalidOperationException("A dolgozó nem található!");
+        }
+        var repairOperation = await unitOfWork
+            .GetRepository<RepairOperation>()
             .FindWithSpecificationAsync(new RepairOperationByOperationIdAndEmployeeIdSpecification(parsedGuid, userAuthEmployee.Id));
         if (repairOperation.FirstOrDefault() is null)
         {
@@ -99,7 +103,7 @@ public class RepairOperationService(IUnitOfWork<DataDbContext> unitOfWork) : IRe
 
         var updatedRepairOperation = repairOperation.FirstOrDefault();
 
-        if (updatedRepairOperation.FaultReport.Status != FaultReportStatus.InProgress)
+        if (updatedRepairOperation?.FaultReport?.Status != FaultReportStatus.InProgress)
         {
             throw new InvalidOperationException("A kiválasztott munka státusza nem megfelelő!");
         }
@@ -151,9 +155,11 @@ public class RepairOperationService(IUnitOfWork<DataDbContext> unitOfWork) : IRe
             .FindWithSpecificationAsync(new RepairOperationByEmployeeNameSpec(employeeName));
     }
 
-    public Task<IEnumerable<RepairOperation>> GetOperationsByDate(DateTime date)
+    public async Task<IEnumerable<RepairOperation>> GetOperationsByDate(int year, int month)
     {
-        throw new NotImplementedException();
+        return await unitOfWork
+            .GetRepository<RepairOperation>()
+            .FindWithSpecificationAsync(new RepairOperationByYearAndMonthSpec(year, month));
     }
 
     public async Task<IEnumerable<RepairOperation>> GetOperationsByWorkType(string workType)

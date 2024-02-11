@@ -9,7 +9,7 @@ public class EmployeeMappingProfile : Profile
     public EmployeeMappingProfile()
     {
         CreateMap<Employee, EmployeeViewModel>()
-            .ForMember(dest => dest.PositionName, opt => opt.MapFrom(src => src.Position.Name))
+            .ForMember(dest => dest.PositionName, opt => opt.MapFrom(src => src.Position != null ? src.Position.Name : null))
             .ReverseMap();
     }
 }

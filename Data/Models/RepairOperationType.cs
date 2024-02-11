@@ -5,11 +5,11 @@ namespace DataContextLib.Models;
 
 public class RepairOperationType : BaseEntity
 {
-    public string Name { get; set; }
+    public string Name { get; set; } = string.Empty;
 
     [XmlIgnore]
     [JsonIgnore]
-    public ICollection<RepairOperation> RepairOperations { get; set; }
+    public ICollection<RepairOperation> RepairOperations { get; set; } = [];
 
     public override string ToString()
     {

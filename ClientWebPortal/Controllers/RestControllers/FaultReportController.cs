@@ -20,9 +20,8 @@ namespace ClientWebPortal.Controllers.RestControllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetFaultReports([FromQuery] string specialQuery = null)
+        public async Task<IActionResult> GetFaultReports([FromQuery] string? specialQuery = null)
         {
-            var x = Request;
             if (!string.IsNullOrEmpty(specialQuery))
             {
                 var faultReport = await _faultReportService.GetReportBySpecialQueryAsync(specialQuery);
@@ -32,7 +31,6 @@ namespace ClientWebPortal.Controllers.RestControllers
                 }
                 return Ok(faultReport);
             }
-
 
             try
             {

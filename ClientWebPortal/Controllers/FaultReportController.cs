@@ -16,7 +16,7 @@ namespace ClientWebPortal.Controllers
         public async Task<IActionResult> Index()
         {
             var reports = await _faultReportService.GetAllReportsAsync();
-            return View(reports);
+            return View(reports.OrderBy(r=>r.ReportedAt));
         }
 
         [Authorize]

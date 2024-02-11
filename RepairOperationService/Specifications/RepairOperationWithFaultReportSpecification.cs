@@ -10,7 +10,7 @@ internal class RepairOperationWithFaultReportSpecification : BaseSpecification<R
         AddInclude(ro => ro.FaultReport);
         AddInclude(ro=>ro.OperationType);
         AddInclude(ro=>ro.Employee);
-        AddInclude(ro => ro.Employee.Position);
-        AddInclude(ro => ro.FaultReport.Address);
+        AddInclude(ro => ro.Employee!.Position);
+        AddInclude(ro => ro.FaultReport!.Address);
     }
 }

@@ -2,7 +2,7 @@
 
 namespace ConsoleAuthenticationService;
 
-public class AuthenticationResult(Employee employee, bool isAuthenticated = false, string username = "", string displayName = "", string email = "", string message = "")
+public class AuthenticationResult(Employee? employee, bool isAuthenticated = false, string username = "", string displayName = "", string email = "", string message = "")
 {
     public bool IsAuthenticated { get; set; } = isAuthenticated;
     public Employee? Employee { get; set; } = employee;

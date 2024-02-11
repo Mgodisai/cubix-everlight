@@ -25,7 +25,7 @@ internal class UserActionService
         Console.WriteLine("4. Kilépés");
         Console.Write(": ");
 
-        return ParseUserAction(Console.ReadLine());
+        return ParseUserAction(Console.ReadLine() ?? string.Empty);
     }
 
     private UserAction ParseUserAction(string input)
@@ -55,7 +55,7 @@ internal class UserActionService
                 break;
             case UserAction.CompleteFaultReport:
                 Console.WriteLine("Munka lezárása");
-                CompleteFaultReport();
+                await CompleteFaultReport();
                 break;
             case UserAction.Logout:
                 Console.WriteLine("Kilépés");
@@ -78,7 +78,7 @@ internal class UserActionService
             try
             {
                 await service.CompletedRepairOperationAsync(parsedGuid, userAuth.Employee, operation);
-                WriteLineSuccess($"Munka lezárva: {repairOperationGuid} ({operation}) - {userAuth.Employee.DisplayName}");
+                WriteLineSuccess($"Munka lezárva: {repairOperationGuid} ({operation}) - {userAuth?.Employee?.DisplayName}");
 
             }
             catch (InvalidOperationException ex)
@@ -97,7 +97,7 @@ internal class UserActionService
         var listOfTakenReports = await service.ListTakenReportsByEmployee(userAuth.Employee);
         foreach (var report in listOfTakenReports)
         {
-            WriteLineSuccess($"Guid: {report.Id}, leírás: {report.FaultReport.Description}, státusz: {report.FaultReport.Status}, op.type: {report.OperationType.Name}");
+            WriteLineSuccess($"Guid: {report.Id}, leírás: {report.FaultReport?.Description}, státusz: {report.FaultReport?.Status}, op.type: {report.OperationType?.Name}");
         }
     }
 
@@ -109,8 +109,8 @@ internal class UserActionService
         {
             try
             {
-                await service.AssignFaultReportToEmployee(parsedGuid, userAuth.Employee);
-                WriteLineSuccess($"Hiba felvéve: {faultReportGuid} - {userAuth.Employee.DisplayName}");
+                _ = await service.AssignFaultReportToEmployee(parsedGuid, userAuth.Employee);
+                WriteLineSuccess($"Hiba felvéve: {faultReportGuid} - {userAuth?.Employee?.DisplayName}");
             }
             catch (InvalidOperationException ex)
             {

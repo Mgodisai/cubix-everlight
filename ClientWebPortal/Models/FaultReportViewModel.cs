@@ -17,5 +17,5 @@ public class FaultReportViewModel : BaseViewModel
     public required string Email { get; set; }
     public DateTime ReportedAt { get; set; }
     public string Status { get; set; } = "New";
-    public AddressViewModel? Address { get; set; }
+    public AddressViewModel Address { get; set; } = new AddressViewModel();
 }

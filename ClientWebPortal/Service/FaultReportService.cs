@@ -86,6 +86,10 @@ public class FaultReportService(IUnitOfWork<DataDbContext> unitOfWork, IMapper m
             var existingAddress = await addressRepository.FindWithSpecificationAsync(new AddressSpecification(address));
 
             await _unitOfWork.CreateTransactionAsync();
+            if (existingAddress.FirstOrDefault() == null)
+            {
+                await addressRepository.InsertAsync(address);
+            }
             faultReport.Address = existingAddress.FirstOrDefault() ?? address;
             await faultReportRepository.InsertAsync(faultReport);
             await _unitOfWork.SaveAsync();

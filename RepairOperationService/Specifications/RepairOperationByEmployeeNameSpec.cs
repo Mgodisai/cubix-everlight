@@ -7,6 +7,6 @@ internal class RepairOperationByEmployeeSpec : RepairOperationWithFaultReportSpe
     public RepairOperationByEmployeeSpec(Guid employeeGuid)
     {
         AddCriteria(ro=>ro.EmployeeId==employeeGuid );
-        AddCriteria(ro=>ro.FaultReport.Status == FaultReportStatus.InProgress);
+        AddCriteria(ro=>ro.FaultReport != null && ro.FaultReport.Status == FaultReportStatus.InProgress);
     }
 }

@@ -9,10 +9,10 @@ namespace DataContextLib.Repository
     {
         private readonly DbContext _context;
         private readonly DbSet<T> _dbSet;
-        private readonly ILogger _logger;
+        private readonly ILogger? _logger;
         private bool _isDisposed;
 
-        public DataRepository(DbContext context, ILogger logger)
+        public DataRepository(DbContext context, ILogger? logger)
         {
             _context = context;
             _logger = logger;
@@ -58,7 +58,7 @@ namespace DataContextLib.Repository
             }
             catch (Exception e)
             {
-                _logger.LogError(e, "Error getting entity with id {Id}", id);
+                _logger?.LogError(e, "Error getting entity with id {Id}", id);
                 return null;
             }
         }
@@ -80,7 +80,7 @@ namespace DataContextLib.Repository
             }
             catch (Exception e)
             {
-                _logger.LogError(e, "Error inserting entity: {entity}", entity);
+                _logger?.LogError(e, "Error inserting entity: {entity}", entity);
                 return false;
             }
         }
@@ -97,13 +97,13 @@ namespace DataContextLib.Repository
                 }
                 else
                 {
-                    _logger.LogWarning("Entity with id {Id} not found for deletion", id);
+                    _logger?.LogWarning("Entity with id {Id} not found for deletion", id);
                     return false;
                 }
             }
             catch (Exception e)
             {
-                _logger.LogError(e, "Error deleting entity with id {Id}", id);
+                _logger?.LogError(e, "Error deleting entity with id {Id}", id);
                 return false;
             }
         }
@@ -120,7 +120,7 @@ namespace DataContextLib.Repository
             }
             catch (Exception e)
             {
-                _logger.LogError(e, "Error updating entity: {entity}", entity);
+                _logger?.LogError(e, "Error updating entity: {entity}", entity);
                 return false;
             }
         }

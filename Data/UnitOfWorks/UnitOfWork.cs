@@ -7,19 +7,21 @@ using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace DataContextLib.UnitOfWorks;
-public class UnitOfWork<TContext> : IUnitOfWork<TContext>, IDisposable where TContext : DbContext
+public class UnitOfWork<TContext>(TContext context) : IUnitOfWork<TContext>, IDisposable where TContext : DbContext
 {
-    public TContext Context { get; }
-    private readonly Dictionary<Type, object> _repositories;
-    private IDbContextTransaction _transaction;
+    public TContext Context { get; } = context;
+    private readonly Dictionary<Type, object> _repositories = [];
+    private IDbContextTransaction? _transaction;
+    public IDbContextTransaction? CurrentTransaction
+    {
+        get
+        {
+            return _transaction;
+        }
+    }
+
     private bool _disposed;
     private string _errorMessage = string.Empty;
-
-    public UnitOfWork(TContext context)
-    {
-        Context = context;
-        _repositories = [];
-    }
 
     public async Task CreateTransactionAsync()
     {
@@ -28,11 +30,19 @@ public class UnitOfWork<TContext> : IUnitOfWork<TContext>, IDisposable where TCo
 
     public async Task CommitAsync()
     {
+        if (_transaction is null)
+        {
+            throw new InvalidOperationException("No active transaction");
+        }
         await _transaction.CommitAsync();
     }
 
     public async Task RollbackAsync()
     {
+        if (_transaction is null)
+        {
+            throw new InvalidOperationException("No active transaction");
+        }
         await _transaction.RollbackAsync();
         _transaction.Dispose();
     }
@@ -60,16 +70,14 @@ public class UnitOfWork<TContext> : IUnitOfWork<TContext>, IDisposable where TCo
     {
         if (!_repositories.ContainsKey(typeof(T)))
         {
-            var repositoryType = typeof(DataRepository<>).MakeGenericType(typeof(T));
-            var repositoryLogger = Context.GetService<ILoggerFactory>().CreateLogger(repositoryType);
-            var repositoryInstance = (IRepository<T>)Activator.CreateInstance(
-                repositoryType,
-                new object[] { Context, repositoryLogger }
-            );
+            var repositoryType = typeof(DataRepository<>).MakeGenericType(typeof(T)) ?? throw new InvalidOperationException("Repository type cannot be null.");
+            var repositoryLogger = Context.GetService<ILoggerFactory>().CreateLogger(repositoryType) ?? throw new InvalidOperationException("Repository logger cannot be null.");
+            var ob = new object[] { Context, repositoryLogger };
+            var repositoryInstance = (IRepository<T>?)Activator.CreateInstance(repositoryType, ob)
+                ?? throw new InvalidOperationException($"Unable to create an instance of {repositoryType}.");
             _repositories.Add(typeof(T), repositoryInstance);
-            var repository = new DataRepository<T>(Context, repositoryLogger);
         }
-        return (IRepository<T>)_repositories[typeof(T)];
+        return (IRepository<T>)_repositories[typeof(T)] ?? throw new InvalidOperationException("A repository instance cannot be null.");
     }
 
     public void Dispose()

@@ -7,7 +7,7 @@ namespace RepairOperationService.Specifications
     {
         public RepairOperationByFaultReportStatusSpecification(FaultReportStatus faultReportStatus) : base()
         {
-            AddCriteria(ro=>ro.FaultReport.Status == faultReportStatus);
+            AddCriteria(ro=>ro.FaultReport != null && ro.FaultReport.Status == faultReportStatus);
         }
     }
 }

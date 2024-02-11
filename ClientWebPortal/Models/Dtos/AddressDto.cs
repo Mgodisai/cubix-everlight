@@ -10,8 +10,8 @@ public class AddressDto
         ErrorMessageResourceName = nameof(ValidationMessages.PostalCodeRequired))]
     [RegularExpression(@"^\d{4}$", ErrorMessageResourceType = typeof(ValidationMessages),
         ErrorMessageResourceName = nameof(ValidationMessages.PostalCodeFormatInvalid))]
-    public string PostalCode { get; set; }
-    public string City { get; set; }
-    public string Street { get; set; }
-    public string HouseNumber { get; set; }
+    public string? PostalCode { get; set; }
+    public string? City { get; set; }
+    public string? Street { get; set; }
+    public string? HouseNumber { get; set; }
 }

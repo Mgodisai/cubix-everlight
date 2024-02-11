@@ -7,6 +7,7 @@ using DataContextLib;
 using DataContextLib.UnitOfWorks;
 using Microsoft.EntityFrameworkCore;
 using StatisticsUI.View;
+using Common;
 
 namespace StatisticsUI;
 
@@ -29,8 +30,8 @@ public partial class App
         services.AddSingleton<MainWindow>();
 
         var appDataDirectory = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-        var dbFilePath = Path.Combine(appDataDirectory, "EverlightApp", "el.db");
-        services.AddDbContext<DataContextLib.DataDbContext>(options =>
+        var dbFilePath = Path.Combine(appDataDirectory, Strings.General_AppDataDirectory, Strings.General_DbName);
+        services.AddDbContext<DataDbContext>(options =>
             options.UseSqlite($"Data Source={dbFilePath}"));
     }
 
@@ -38,6 +39,6 @@ public partial class App
     {
         base.OnStartup(e);
         var mainWindow = _serviceProvider.GetService<MainWindow>();
-        mainWindow.Show();
+        mainWindow?.Show();
     }
 }

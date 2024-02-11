@@ -15,13 +15,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common", "Common\Common.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RepairOperationService", "RepairOperationService\RepairOperationService.csproj", "{3F07FA3E-6E88-4316-A717-38932C0A1992}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RepairOperationConsole", "RepairOperationConsole\RepairOperationConsole.csproj", "{43398D51-D0EC-4FD8-B848-6DB381CDDC09}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RepairOperationConsole", "RepairOperationConsole\RepairOperationConsole.csproj", "{43398D51-D0EC-4FD8-B848-6DB381CDDC09}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleAuthenticationService", "ConsoleAuthenticationService\ConsoleAuthenticationService.csproj", "{FAA5872A-1916-4BD0-BD7D-9DE8DFDFED3A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleAuthenticationService", "ConsoleAuthenticationService\ConsoleAuthenticationService.csproj", "{FAA5872A-1916-4BD0-BD7D-9DE8DFDFED3A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StatisticsUI", "StatisticsUI\StatisticsUI.csproj", "{BB767FE0-A95C-4FAD-AFA6-FD34E999E1B7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StatisticsUI", "StatisticsUI\StatisticsUI.csproj", "{BB767FE0-A95C-4FAD-AFA6-FD34E999E1B7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataContextLib.Tests", "DataContextLib.Tests\DataContextLib.Tests.csproj", "{5FCE64CE-3EFF-48E0-8A1D-C39D559D93C6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataContextLib.Tests", "DataContextLib.Tests\DataContextLib.Tests.csproj", "{5FCE64CE-3EFF-48E0-8A1D-C39D559D93C6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

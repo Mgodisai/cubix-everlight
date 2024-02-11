@@ -18,7 +18,7 @@ namespace StatisticsUI.ViewModel;
 public class MainWindowViewModel : INotifyPropertyChanged
 {
     private readonly IRepairOperationService repairOperationService;
-    private ObservableCollection<RepairOperation> repairOperations;
+    private ObservableCollection<RepairOperation> repairOperations = [];
     public ICommand ExportCommand { get; private set; }
 
     public ObservableCollection<RepairOperation> RepairOperations
@@ -31,18 +31,24 @@ public class MainWindowViewModel : INotifyPropertyChanged
     {
         repairOperationService = service;
         RepairOperations = new ObservableCollection<RepairOperation>(service.GetAllOperations().GetAwaiter().GetResult());
-        ExportCommand = new RelayCommandAsync(async () => await ExportData("JSON"));
+        ExportCommand = new RelayCommandAsync(async () => await ExportData());
     }
 
-    public event PropertyChangedEventHandler PropertyChanged;
-    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null) =>
+    public event PropertyChangedEventHandler? PropertyChanged;
+    protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null) =>
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
-    public async Task FilterByEmployee(string employeeName) =>
+    public async Task FilterByEmployee(string? employeeName)
+    {
+        if (employeeName == null)
+        {
+            return;
+        }
         RepairOperations = new ObservableCollection<RepairOperation>(await repairOperationService.GetOperationsByEmployee(employeeName));
+    }
 
-    public async Task FilterByDate(DateTime date) =>
-        RepairOperations = new ObservableCollection<RepairOperation>(await repairOperationService.GetOperationsByDate(date));
+    public async Task FilterByDate(int year, int month) =>
+        RepairOperations = new ObservableCollection<RepairOperation>(await repairOperationService.GetOperationsByDate(year, month));
 
     public async Task FilterByWorkType(string workType) =>
         RepairOperations = new ObservableCollection<RepairOperation>(await repairOperationService.GetOperationsByWorkType(workType));
@@ -59,45 +65,51 @@ public class MainWindowViewModel : INotifyPropertyChanged
     public async Task<IEnumerable<RepairOperationType>> GetAllWorkTypes() =>
         await repairOperationService.GetAllRepairOperationTypes();
 
-    private async void ExportData(object parameter)
+    private async Task ExportData()
     {
-        SaveFileDialog saveFileDialog = new SaveFileDialog
+        ExportType[] exportTypes = 
         {
-            Filter = "JSON files (*.json)|*.json|XML files (*.xml)|*.xml|CSV files (*.csv)|*.csv",
-            DefaultExt = "json",
+            new(".json", "JSON files(*.json)| *.json", ExportToJsonAsync),
+            new(".xml", "XML files (*.xml)|*.xml", ExportToXmlAsync),
+            new(".csv", "CSV files (*.csv)|*.csv", ExportToCsvAsync)
+        };
+        var filterString = string.Join("|", exportTypes.Select(et=>et.FilterText));
+        SaveFileDialog saveFileDialog = new()
+        {
+            Filter = filterString,
+            DefaultExt = Path.GetExtension(exportTypes.Select(et => et.Extension).First()),
             FileName = "ExportedData"
         };
 
         if (saveFileDialog.ShowDialog() == true)
         {
-            string exportType = parameter as string;
-            switch (exportType)
+            string filePath = saveFileDialog.FileName;
+            string selectedExtension = Path.GetExtension(filePath).ToLower();
+            var type = exportTypes.Where(et => et.Extension == selectedExtension).FirstOrDefault();
+            if (type is not null)
             {
-                case "JSON":
-                    await ExportToJson(saveFileDialog.FileName);
-                    break;
-                case "XML":
-                    await ExportToXml(saveFileDialog.FileName);
-                    break;
-                case "CSV":
-                    await ExportToCsv(saveFileDialog.FileName);
-                    break;
+                await type.ExportFunc(filePath);
+            }
+            else
+            {
+                MessageBox.Show("Unsupported file type.");
             }
         }
     }
 
-    private void ExportToJson(string filePath)
+    private async Task ExportToJsonAsync(string filePath)
     {
         var options = new JsonSerializerOptions
         {
             Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
             WriteIndented = true,
-            ReferenceHandler = ReferenceHandler.Preserve
+            ReferenceHandler = ReferenceHandler.IgnoreCycles
+
         };
         string json = JsonSerializer.Serialize(RepairOperations, options);
         try
         {
-            File.WriteAllText(filePath, json);
+            await File.WriteAllTextAsync(filePath, json);
         }
         catch (Exception ex)
         {
@@ -105,14 +117,22 @@ public class MainWindowViewModel : INotifyPropertyChanged
         }
     }
 
-    private void ExportToXml(string filePath)
+    private async Task ExportToXmlAsync(string filePath)
     {
         var serializer = new XmlSerializer(typeof(ObservableCollection<RepairOperation>));
-        using (var writer = new StreamWriter(filePath))
+
+        await using (var memoryStream = new MemoryStream())
         {
             try
             {
-                serializer.Serialize(writer, RepairOperations);
+                serializer.Serialize(memoryStream, RepairOperations);
+
+                memoryStream.Seek(0, SeekOrigin.Begin);
+
+                await using (var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None, bufferSize: 4096, useAsync: true))
+                {
+                    await memoryStream.CopyToAsync(fileStream);
+                }
             }
             catch (Exception ex)
             {
@@ -121,23 +141,25 @@ public class MainWindowViewModel : INotifyPropertyChanged
         }
     }
 
-    private void ExportToCsv(string filePath)
+    private async Task ExportToCsvAsync(string filePath)
     {
         var sb = new StringBuilder();
 
-        sb.AppendLine("Id,EmployeeName,Date,WorkType");
+        sb.AppendLine("Id;Employee;StartDate;EndDate;Status;WorkType;Description;Address");
         foreach (var operation in RepairOperations)
         {
-            sb.AppendLine($"{operation.Id},{operation.Employee},{operation.StartDate},{operation.EndDate}");
+            sb.AppendLine($"{operation.Id};{operation.Employee};{operation.StartDate};{operation.EndDate};{operation.FaultReport?.Status};{operation.OperationType};{operation.FaultReport?.Description};{operation.FaultReport?.Address}");
         }
         try
         {
-            File.WriteAllText(filePath, sb.ToString());
+            using var writer = new StreamWriter(filePath, false, new UTF8Encoding(encoderShouldEmitUTF8Identifier: true));
+            await writer.WriteAsync(sb.ToString());
         }
         catch (Exception ex)
         {
             MessageBox.Show($"Error saving file: {ex.Message}");
         }
-        
     }
+
+    private record ExportType(string Extension, string FilterText, Func<string, Task> ExportFunc);
 }

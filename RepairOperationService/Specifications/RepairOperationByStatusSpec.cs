@@ -6,6 +6,6 @@ internal class RepairOperationByStatusSpec : RepairOperationWithFaultReportSpeci
 {
     public RepairOperationByStatusSpec(FaultReportStatus status)
     {
-        AddCriteria(ro=>ro.FaultReport.Status == status);
+        AddCriteria(ro=>ro.FaultReport != null && ro.FaultReport.Status == status);
     }
 }

@@ -36,7 +36,7 @@ namespace ClientWebPortal.Service
                 await _unitOfWork.SaveAsync();
                 await _unitOfWork.CommitAsync();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 await _unitOfWork.RollbackAsync();
             }
@@ -51,7 +51,7 @@ namespace ClientWebPortal.Service
                 await _unitOfWork.SaveAsync();
                 await _unitOfWork.CommitAsync();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 await _unitOfWork.RollbackAsync();
             }

@@ -1,18 +1,13 @@
-﻿using System.ComponentModel;
-
-namespace DataContextLib.Models;
+﻿namespace DataContextLib.Models;
 
 public class RepairOperation : BaseEntity
 {
-    [Browsable(false)]
     public Guid FaultReportId { get; set; }
-    public FaultReport FaultReport { get; set; }
-    [Browsable(false)]
+    public FaultReport? FaultReport { get; set; }
     public Guid EmployeeId { get; set; }
-    public Employee Employee { get; set; }
-    [Browsable(false)]
+    public Employee? Employee { get; set; }
     public Guid OperationTypeId { get; set; }
-    public RepairOperationType OperationType { get; set; }
+    public RepairOperationType? OperationType { get; set; }
     public DateTime StartDate { get; set; }
-    public DateTime EndDate { get; set; }
+    public DateTime? EndDate { get; set; }
 }

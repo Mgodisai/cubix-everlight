@@ -10,7 +10,7 @@ namespace RepairOperationService
 
         Task<IEnumerable<RepairOperation>> GetAllOperations();
         Task<IEnumerable<RepairOperation>> GetOperationsByEmployee(string employeeName);
-        Task<IEnumerable<RepairOperation>> GetOperationsByDate(DateTime date);
+        Task<IEnumerable<RepairOperation>> GetOperationsByDate(int year, int month);
         Task<IEnumerable<RepairOperation>> GetOperationsByWorkType(string workType);
         Task<IEnumerable<Employee>> GetAllEmployees();
         Task<IEnumerable<RepairOperationType>> GetAllRepairOperationTypes();

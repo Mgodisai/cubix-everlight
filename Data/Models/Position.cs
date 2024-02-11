@@ -2,7 +2,7 @@
 
 public class Position : BaseEntity
 {
-    public string Name { get; set; }
+    public string Name { get; set; } = string.Empty;
 
     public override string ToString()
     {

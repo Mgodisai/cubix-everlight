@@ -4,6 +4,6 @@ internal class RepairOperationByOperationTypeNameSpec : RepairOperationWithFault
 {
     public RepairOperationByOperationTypeNameSpec(string operationTypeName)
     {
-        AddCriteria(ro=>ro.OperationType.Name == operationTypeName);
+        AddCriteria(ro=>ro.OperationType != null && ro.OperationType.Name == operationTypeName);
     }
 }

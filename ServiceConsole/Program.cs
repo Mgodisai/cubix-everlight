@@ -13,8 +13,15 @@ internal partial class Program
         await RunFaultReportQueryLoop();
     }
 
+    private static JsonSerializerOptions GetOptions()
+    {
+        return new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        };
+    }
 
-    private static async Task ProcessUserQuery(string input)
+    private static async Task ProcessUserQuery(string input, JsonSerializerOptions options)
     {
         var baseUrl = "https://localhost:7199/api/FaultReport";
         using var client = new HttpClient();
@@ -30,18 +37,14 @@ internal partial class Program
             if (response.IsSuccessStatusCode)
             {
                 var content = await response.Content.ReadAsStringAsync();
-                var options = new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                };
                 var faultReports = JsonSerializer.Deserialize<IEnumerable<FaultReportDto>>(content, options);
 
-                if (faultReports.Any())
+                if (faultReports is not null && faultReports.Any())
                 {
                     foreach (var fr in faultReports)
                     {
-                        var address = $"{fr.AddressDto.PostalCode} {fr.AddressDto.City}, {fr.AddressDto.Street} {fr.AddressDto.HouseNumber}";
-                        var print = $"FaultReport ({fr.Status}): {address} - {fr.Description}, reported: {fr.ReportedAt}, guid: {fr.Id}";
+                        var address = $"{fr.AddressDto?.PostalCode} {fr.AddressDto?.City}, {fr.AddressDto?.Street} {fr.AddressDto?.HouseNumber}";
+                        var print = $"FaultReport ({fr.Status}): {address} - {fr.Description.TruncateString(20)}, reported: {fr.ReportedAt}, guid: {fr.Id}";
 
                             WriteLineSuccess(print);
                     }
@@ -75,7 +78,7 @@ internal partial class Program
             string input = GetUserInput();
             if (input.ToLower().Equals(Strings.ServiceConsole_Quit)) break;
 
-            await ProcessUserQuery(input);
+            await ProcessUserQuery(input, GetOptions());
         }
     }
 }
